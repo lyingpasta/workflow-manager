@@ -24,17 +24,17 @@
 
 <div class="absolute w-full h-full p-5 z-60">
 	<div
-		class="rounded-lg w-full h-full bg-gray-50 border border-solid border-gray-500 p-2 justify-evenly flex flex-col gap-2"
+		class="rounded-lg w-full h-full bg-white border border-solid border-gray-500 p-2 justify-evenly flex flex-col gap-2"
 	>
 		<div class="flex flex-row justify-evenly gap-2 grow">
-			<div class="w-full h-full border border-solid border-gray-300"></div>
-			<div class="w-full h-full border border-solid border-gray-300 bg-white pt-6 pb-2 pl-4 pr-4">
+			<div class="w-full h-full border border-solid border-gray-300 bg-gray-50"></div>
+			<div class="w-full h-full pt-6 pb-2 pl-4 pr-4">
 				<div>
 					<p class="mb-2">Node Title</p>
 					<InputText bind:value={nodeTitle} />
 				</div>
 			</div>
-			<div class="w-full h-full border border-solid border-gray-300"></div>
+			<div class="w-full h-full border border-solid border-gray-300 bg-gray-50"></div>
 		</div>
 		<div class="w-full h-fit grow-0 flex flex-row justify-end gap-5">
 			<button

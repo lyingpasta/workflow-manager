@@ -266,11 +266,11 @@
 ></canvas>
 
 <div class="absolute flex bottom-10 right-10">
-	<Button onClick={zoomIn} position="left">+</Button>
+	<Button onClick={zoomIn} type="normal" position="left">+</Button>
 	<div
 		class="h-10 w-12 flex justify-center items-center bg-white border-gray-300 border-t border-b"
 	>
 		x{zoomLevel.toFixed(1)}
 	</div>
-	<Button onClick={zoomOut} position="right">-</Button>
+	<Button onClick={zoomOut} type="normal" position="right">-</Button>
 </div>
