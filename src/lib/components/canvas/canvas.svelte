@@ -7,7 +7,7 @@
 
 	type ZoomLevel = number;
 	type InputProps = {
-		canvasNodes: CanvasNode[];
+		readonly canvasNodes: CanvasNode[];
 		readonly width: number;
 		readonly height: number;
 		readonly selectedNode: CanvasNode | undefined;

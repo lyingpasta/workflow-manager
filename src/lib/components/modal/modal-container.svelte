@@ -6,6 +6,7 @@
 
 	const initialTitle = $derived(node?.title);
 
+	// svelte-ignore state_referenced_locally
 	let nodeTitle: string | undefined = $state.raw(initialTitle);
 
 	function cancel() {
