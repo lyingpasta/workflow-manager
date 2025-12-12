@@ -238,23 +238,8 @@
 			x: node.coordinates.x + NODE_DIMENSION,
 			y: node.coordinates.y
 		});
-		console.log(
-			topRight.x,
-			coordinates.x,
-			bottomRight.x,
-			coordinates.x - topRight.x,
-			bottomRight.x - coordinates.x
-		);
-		console.log(
-			topRight.y,
-			coordinates.y,
-			topLeft.y,
-			coordinates.y - topRight.y,
-			topLeft.y - coordinates.y
-		);
 		const xCollision = coordinates.x - topRight.x > 0 && bottomRight.x - coordinates.x > 0;
 		const yCollision = coordinates.y - topRight.y > 0 && topLeft.y - coordinates.y > 0;
-		console.log(node.id, xCollision, yCollision);
 		if (xCollision && yCollision) {
 			return true;
 		}
