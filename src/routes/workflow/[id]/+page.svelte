@@ -1,5 +1,6 @@
 <script lang="ts">
 	import Canvas from '$lib/components/canvas/canvas.svelte';
+	import Toolbox from '$lib/components/toolbox.svelte';
 	import type { CanvasNode, Coordinates } from '$lib/types/canvas';
 	import type { NodeType } from '$lib/types/nodes';
 
@@ -12,8 +13,8 @@
 		canvasNodes.push(canvasNode);
 	}
 
-	function selectNode(nodeId: string) {
-		selectedNode = canvasNodes.find((node) => node.id === nodeId);
+	function selectNode(node: CanvasNode) {
+		selectedNode = node;
 	}
 
 	function moveNode(newCoordinates: Coordinates) {
@@ -21,11 +22,28 @@
 			selectedNode.coordinates = newCoordinates;
 		}
 	}
+
+	function deleteNode() {
+		if (selectedNode) {
+			canvasNodes = canvasNodes.filter((node) => node.id !== selectedNode!.id);
+			selectedNode = undefined;
+		}
+	}
 </script>
 
 <svelte:window bind:innerWidth={width} bind:innerHeight={height} />
 
 <div class="relative h-full w-full">
+	<div
+		class={`${selectedNode ? 'visible' : 'hidden'} absolute w-full flex justify-center top-4 z-50`}
+	>
+		<Toolbox
+			onDeleteButtonPressed={deleteNode}
+			onEditButtonPressed={() => {}}
+			onDuplicateButtonPressed={() => {}}
+		/>
+	</div>
+
 	<Canvas
 		{canvasNodes}
 		{width}

@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { mount, onMount, unmount } from 'svelte';
-	import Button from './button.svelte';
 	import ActionMenu from './action-menu.svelte';
 	import type { NodeType } from '$lib/types/nodes';
 	import type { CanvasNode, Coordinates } from '$lib/types/canvas';
+	import Button from '../button.svelte';
 
 	type ZoomLevel = number;
 	type InputProps = {
@@ -37,11 +37,15 @@
 	let globalPosition: { x: number; y: number } = $state({ x: 0, y: 0 });
 	let menuCoordinates: { x: number; y: number } = $state({ x: 0, y: 0 });
 	let actionMenuMounted: any | undefined = $state.raw(undefined);
-	let selectedNodeId: string | undefined = $state(undefined);
 	let isMouseWithinNodeBoundaries: boolean = $state(false);
 
 	onMount(() => {
 		context = canvas.getContext('2d')!;
+		drawLoop();
+	});
+
+	$effect(() => {
+		selectedNode;
 		drawLoop();
 	});
 
@@ -61,7 +65,7 @@
 
 	function drawNodes() {
 		for (let node of canvasNodes) {
-			if (selectedNodeId === node.id) {
+			if (selectedNode && selectedNode.id === node.id) {
 				context.lineWidth = 5;
 				context.strokeStyle = '#ff9933';
 				context.fillStyle = '#f6f6f6';
@@ -167,13 +171,11 @@
 	function updateMouseStateDependingOnButton(event: MouseEvent) {
 		destroyActionMenuIfPossible();
 		if (event.button === 0) {
-			if (selectedNodeId) {
-				if (selectedNode) {
-					isMouseWithinNodeBoundaries = computeCollisionForNode(selectedNode, {
-						x: event.clientX,
-						y: event.clientY
-					});
-				}
+			if (selectedNode) {
+				isMouseWithinNodeBoundaries = computeCollisionForNode(selectedNode, {
+					x: event.clientX,
+					y: event.clientY
+				});
 			}
 			isRightClickDown = false;
 			isLeftClickDown = true;
@@ -212,17 +214,20 @@
 
 	function selectElementIfPossible(event: MouseEvent) {
 		if (event.button === 0) {
-			selectedNodeId = getCollidedNodeIdWithCoordinates({ x: event.clientX, y: event.clientY });
-			onNodeSelected(selectedNodeId);
+			const collidingNode = getCollidedNodeIdWithCoordinates({
+				x: event.clientX,
+				y: event.clientY
+			});
+			onNodeSelected(collidingNode);
 			drawLoop();
 		}
 	}
 
-	function getCollidedNodeIdWithCoordinates(coordinates: Coordinates): string | undefined {
+	function getCollidedNodeIdWithCoordinates(coordinates: Coordinates): CanvasNode | undefined {
 		for (let node of canvasNodes) {
 			const isColliding = computeCollisionForNode(node, coordinates);
 			if (isColliding) {
-				return node.id;
+				return node;
 			}
 		}
 		return undefined;
