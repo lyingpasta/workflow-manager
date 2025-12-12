@@ -22,6 +22,7 @@
 	let actionMenuMounted: any | undefined = $state.raw(undefined);
 	let canvasNodes: CanvasNode[] = $state([]);
 	let selectedNodeId: string | undefined = $state(undefined);
+	let isMouseWithinNodeBoundaries: boolean = $state(false);
 
 	onMount(() => {
 		context = canvas.getContext('2d')!;
@@ -118,9 +119,18 @@
 	function move(event: MouseEvent) {
 		if (isLeftClickDown) {
 			const direction = { x: event.movementX, y: event.movementY };
-			const newX = globalPosition.x + direction.x;
-			const newY = globalPosition.y + direction.y;
-			globalPosition = { x: newX > 0 ? 0 : newX, y: newY > 0 ? 0 : newY };
+			if (isMouseWithinNodeBoundaries) {
+				const selectedNode = canvasNodes.find((node) => node.id === selectedNodeId!);
+				if (selectedNode) {
+					const newX = selectedNode.coordinates.x + direction.x / zoomLevel;
+					const newY = selectedNode.coordinates.y + direction.y / zoomLevel;
+					selectedNode.coordinates = { x: newX < 0 ? 0 : newX, y: newY < 0 ? 0 : newY };
+				}
+			} else {
+				const newX = globalPosition.x + direction.x;
+				const newY = globalPosition.y + direction.y;
+				globalPosition = { x: newX > 0 ? 0 : newX, y: newY > 0 ? 0 : newY };
+			}
 			drawLoop();
 		}
 	}
@@ -129,8 +139,8 @@
 		const node = {
 			id: window.crypto.randomUUID(),
 			coordinates: {
-				x: menuCoordinates.x / zoomLevel - NODE_DIMENSION / 2,
-				y: menuCoordinates.y / zoomLevel - NODE_DIMENSION / 2
+				x: menuCoordinates.x / zoomLevel - globalPosition.x - NODE_DIMENSION / 2,
+				y: menuCoordinates.y / zoomLevel - globalPosition.x - NODE_DIMENSION / 2
 			},
 			title: type
 		};
@@ -141,9 +151,17 @@
 	}
 
 	function updateMouseStateDependingOnButton(event: MouseEvent) {
-		// event.preventDefault();
 		destroyActionMenuIfPossible();
 		if (event.button === 0) {
+			if (selectedNodeId) {
+				const selectedNode = canvasNodes.find((node) => node.id === selectedNodeId);
+				if (selectedNode) {
+					isMouseWithinNodeBoundaries = computeCollisionForNode(selectedNode, {
+						x: event.clientX,
+						y: event.clientY
+					});
+				}
+			}
 			isRightClickDown = false;
 			isLeftClickDown = true;
 		} else if (event.button === 2) {
@@ -188,37 +206,45 @@
 
 	function getCollidedNodeIdWithCoordinates(coordinates: Coordinates): string | undefined {
 		for (let node of canvasNodes) {
-			const topRight = toGlobalCoordinates(node.coordinates);
-			const topLeft = toGlobalCoordinates({
-				x: node.coordinates.x,
-				y: node.coordinates.y + NODE_DIMENSION
-			});
-			const bottomRight = toGlobalCoordinates({
-				x: node.coordinates.x + NODE_DIMENSION,
-				y: node.coordinates.y
-			});
-			console.log(
-				topRight.x,
-				coordinates.x,
-				bottomRight.x,
-				coordinates.x - topRight.x,
-				bottomRight.x - coordinates.x
-			);
-			console.log(
-				topRight.y,
-				coordinates.y,
-				topLeft.y,
-				coordinates.y - topRight.y,
-				topLeft.y - coordinates.y
-			);
-			const xCollision = coordinates.x - topRight.x > 0 && bottomRight.x - coordinates.x > 0;
-			const yCollision = coordinates.y - topRight.y > 0 && topLeft.y - coordinates.y > 0;
-			console.log(node.id, xCollision, yCollision);
-			if (xCollision && yCollision) {
+			const isColliding = computeCollisionForNode(node, coordinates);
+			if (isColliding) {
 				return node.id;
 			}
 		}
 		return undefined;
+	}
+
+	function computeCollisionForNode(node: CanvasNode, coordinates: Coordinates): boolean {
+		const topRight = toGlobalCoordinates(node.coordinates);
+		const topLeft = toGlobalCoordinates({
+			x: node.coordinates.x,
+			y: node.coordinates.y + NODE_DIMENSION
+		});
+		const bottomRight = toGlobalCoordinates({
+			x: node.coordinates.x + NODE_DIMENSION,
+			y: node.coordinates.y
+		});
+		console.log(
+			topRight.x,
+			coordinates.x,
+			bottomRight.x,
+			coordinates.x - topRight.x,
+			bottomRight.x - coordinates.x
+		);
+		console.log(
+			topRight.y,
+			coordinates.y,
+			topLeft.y,
+			coordinates.y - topRight.y,
+			topLeft.y - coordinates.y
+		);
+		const xCollision = coordinates.x - topRight.x > 0 && bottomRight.x - coordinates.x > 0;
+		const yCollision = coordinates.y - topRight.y > 0 && topLeft.y - coordinates.y > 0;
+		console.log(node.id, xCollision, yCollision);
+		if (xCollision && yCollision) {
+			return true;
+		}
+		return false;
 	}
 </script>
 
