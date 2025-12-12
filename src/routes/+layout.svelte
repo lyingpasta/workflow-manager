@@ -8,6 +8,14 @@
 <svelte:head>
 	<link rel="icon" href={favicon} />
 </svelte:head>
-<div class="w-screen h-screen">
+
+<div id="main" class="w-screen h-screen">
 	{@render children()}
 </div>
+
+<style>
+	#main {
+		/* Prioritizes Helvetica Neue or Helvetica, with fallbacks */
+		font-family: 'JetBrains Mono', Helvetica, Arial, sans-serif;
+	}
+</style>
