@@ -1,0 +1,234 @@
+<script lang="ts">
+	import { mount, onMount, unmount } from 'svelte';
+	import Button from './button.svelte';
+	import ActionMenu from './action-menu.svelte';
+	import type { NodeType } from '$lib/types/nodes';
+	import type { CanvasNode, Coordinates } from '$lib/types/canvas';
+
+	type ZoomLevel = number;
+
+	const NODE_DIMENSION = 100;
+
+	let { width, height, onNodeDraw } = $props();
+
+	let canvas: HTMLCanvasElement;
+	let context: CanvasRenderingContext2D;
+
+	let zoomLevel: ZoomLevel = $state(1.5);
+	let isLeftClickDown: boolean = $state(false);
+	let isRightClickDown: boolean = $state(false);
+	let globalPosition: { x: number; y: number } = $state({ x: 0, y: 0 });
+	let menuCoordinates: { x: number; y: number } = $state({ x: 0, y: 0 });
+	let actionMenuMounted: any | undefined = $state.raw(undefined);
+	let canvasNodes: CanvasNode[] = $state([]);
+	let selectedNodeId: string | undefined = $state(undefined);
+
+	onMount(() => {
+		context = canvas.getContext('2d')!;
+		drawLoop();
+	});
+
+	function drawLoop() {
+		context.clearRect(0, 0, canvas.width, canvas.height);
+		fillBackground();
+		drawReference();
+		drawNodes();
+	}
+
+	function toGlobalCoordinates(coordinates: Coordinates): Coordinates {
+		return {
+			x: coordinates.x * zoomLevel + globalPosition.x,
+			y: coordinates.y * zoomLevel + globalPosition.y
+		};
+	}
+
+	function drawNodes() {
+		for (let node of canvasNodes) {
+			if (selectedNodeId === node.id) {
+				context.strokeStyle = '#ff9933';
+				context.fillStyle = '#f6f6f6';
+			} else {
+				context.strokeStyle = '#585858';
+				context.fillStyle = '#fdfdfd';
+			}
+			context.beginPath();
+			const nodeGlobalCoordinate = toGlobalCoordinates(node.coordinates);
+			context.roundRect(
+				nodeGlobalCoordinate.x,
+				nodeGlobalCoordinate.y,
+				NODE_DIMENSION * zoomLevel,
+				NODE_DIMENSION * zoomLevel,
+				[5 * zoomLevel]
+			);
+			context.stroke();
+			context.fill();
+			context.closePath();
+		}
+	}
+
+	function fillBackground() {
+		context.fillStyle = '#fffffa';
+		context.fillRect(0, 0, width, height);
+	}
+
+	function drawReference() {
+		context.beginPath();
+		for (let j = globalPosition.y; j < canvas.height; j += 50 * zoomLevel) {
+			for (let i = globalPosition.x; i < canvas.width; i += 50 * zoomLevel) {
+				context.strokeStyle = '#ffaf44';
+				context.strokeStyle = '1px';
+				const fromX = Math.max(i - 3 * zoomLevel, 0);
+				const toX = Math.max(i + 3 * zoomLevel, 0);
+				context.moveTo(fromX, j);
+				context.lineTo(toX, j);
+
+				const fromY = Math.max(j - 3 * zoomLevel, 0);
+				const toY = Math.max(j + 3 * zoomLevel, 0);
+				context.moveTo(i, fromY);
+				context.lineTo(i, toY);
+
+				context.stroke();
+			}
+		}
+		context.closePath();
+	}
+
+	function zoomIn() {
+		if (zoomLevel < 2.9) zoomLevel += 0.1;
+		drawLoop();
+	}
+
+	function zoomOut() {
+		if (zoomLevel > 1) zoomLevel -= 0.1;
+		drawLoop();
+	}
+
+	function move(event: MouseEvent) {
+		if (isLeftClickDown) {
+			const direction = { x: event.movementX, y: event.movementY };
+			const newX = globalPosition.x + direction.x;
+			const newY = globalPosition.y + direction.y;
+			globalPosition = { x: newX > 0 ? 0 : newX, y: newY > 0 ? 0 : newY };
+			drawLoop();
+		}
+	}
+
+	function addNodeToContext(type: NodeType) {
+		const node = {
+			id: window.crypto.randomUUID(),
+			coordinates: {
+				x: menuCoordinates.x / zoomLevel - NODE_DIMENSION / 2,
+				y: menuCoordinates.y / zoomLevel - NODE_DIMENSION / 2
+			},
+			title: type
+		};
+		canvasNodes.push(node);
+		onNodeDraw(node, type);
+		destroyActionMenuIfPossible();
+		drawLoop();
+	}
+
+	function updateMouseStateDependingOnButton(event: MouseEvent) {
+		// event.preventDefault();
+		destroyActionMenuIfPossible();
+		if (event.button === 0) {
+			isRightClickDown = false;
+			isLeftClickDown = true;
+		} else if (event.button === 2) {
+			menuCoordinates = { x: event.clientX, y: event.clientY };
+			isLeftClickDown = false;
+			drawActionMenuAroundMouse();
+		}
+	}
+
+	function resetClicks() {
+		isLeftClickDown = false;
+		isRightClickDown = false;
+		destroyActionMenuIfPossible();
+		drawLoop();
+	}
+
+	function drawActionMenuAroundMouse() {
+		actionMenuMounted = mount(ActionMenu, {
+			target: document.body,
+			props: {
+				style: `top:${menuCoordinates.y - 120 / 2}px;left:${menuCoordinates.x - 360 / 2}px;z-index=40`,
+				onExtractClick: () => addNodeToContext('extract'),
+				onTransformClick: () => addNodeToContext('transform'),
+				onLoadClick: () => addNodeToContext('load')
+			}
+		});
+	}
+
+	function destroyActionMenuIfPossible() {
+		if (actionMenuMounted) {
+			unmount(actionMenuMounted);
+			actionMenuMounted = undefined;
+		}
+	}
+
+	function selectElementIfPossible(event: MouseEvent) {
+		if (event.button === 0) {
+			selectedNodeId = getCollidedNodeIdWithCoordinates({ x: event.clientX, y: event.clientY });
+			drawLoop();
+		}
+	}
+
+	function getCollidedNodeIdWithCoordinates(coordinates: Coordinates): string | undefined {
+		for (let node of canvasNodes) {
+			const topRight = toGlobalCoordinates(node.coordinates);
+			const topLeft = toGlobalCoordinates({
+				x: node.coordinates.x,
+				y: node.coordinates.y + NODE_DIMENSION
+			});
+			const bottomRight = toGlobalCoordinates({
+				x: node.coordinates.x + NODE_DIMENSION,
+				y: node.coordinates.y
+			});
+			console.log(
+				topRight.x,
+				coordinates.x,
+				bottomRight.x,
+				coordinates.x - topRight.x,
+				bottomRight.x - coordinates.x
+			);
+			console.log(
+				topRight.y,
+				coordinates.y,
+				topLeft.y,
+				coordinates.y - topRight.y,
+				topLeft.y - coordinates.y
+			);
+			const xCollision = coordinates.x - topRight.x > 0 && bottomRight.x - coordinates.x > 0;
+			const yCollision = coordinates.y - topRight.y > 0 && topLeft.y - coordinates.y > 0;
+			console.log(node.id, xCollision, yCollision);
+			if (xCollision && yCollision) {
+				return node.id;
+			}
+		}
+		return undefined;
+	}
+</script>
+
+<canvas
+	id="canvas"
+	class={`top-0 absolute ${isLeftClickDown ? 'cursor-grabbing' : 'cursor-grab'}`}
+	{width}
+	{height}
+	bind:this={canvas}
+	onmousedown={updateMouseStateDependingOnButton}
+	onmouseup={resetClicks}
+	onmousemove={move}
+	onclick={selectElementIfPossible}
+	oncontextmenu={(event) => event.preventDefault()}
+></canvas>
+
+<div class="absolute flex bottom-10 right-10">
+	<Button onClick={zoomIn} position="left">+</Button>
+	<div
+		class="h-10 w-12 flex justify-center items-center bg-white border-gray-300 border-t border-b"
+	>
+		x{zoomLevel.toFixed(1)}
+	</div>
+	<Button onClick={zoomOut} position="right">-</Button>
+</div>
