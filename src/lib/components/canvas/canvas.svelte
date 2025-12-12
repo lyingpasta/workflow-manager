@@ -6,10 +6,27 @@
 	import type { CanvasNode, Coordinates } from '$lib/types/canvas';
 
 	type ZoomLevel = number;
+	type InputProps = {
+		canvasNodes: CanvasNode[];
+		readonly width: number;
+		readonly height: number;
+		readonly selectedNode: CanvasNode | undefined;
+		onNodeDraw: (...props: any[]) => any;
+		onNodeSelected: (...props: any[]) => any;
+		onNodeMoved: (...props: any[]) => any;
+	};
 
 	const NODE_DIMENSION = 100;
 
-	let { width, height, onNodeDraw } = $props();
+	let {
+		canvasNodes,
+		width,
+		height,
+		selectedNode,
+		onNodeDraw,
+		onNodeSelected,
+		onNodeMoved
+	}: InputProps = $props();
 
 	let canvas: HTMLCanvasElement;
 	let context: CanvasRenderingContext2D;
@@ -20,7 +37,6 @@
 	let globalPosition: { x: number; y: number } = $state({ x: 0, y: 0 });
 	let menuCoordinates: { x: number; y: number } = $state({ x: 0, y: 0 });
 	let actionMenuMounted: any | undefined = $state.raw(undefined);
-	let canvasNodes: CanvasNode[] = $state([]);
 	let selectedNodeId: string | undefined = $state(undefined);
 	let isMouseWithinNodeBoundaries: boolean = $state(false);
 
@@ -120,11 +136,10 @@
 		if (isLeftClickDown) {
 			const direction = { x: event.movementX, y: event.movementY };
 			if (isMouseWithinNodeBoundaries) {
-				const selectedNode = canvasNodes.find((node) => node.id === selectedNodeId!);
 				if (selectedNode) {
 					const newX = selectedNode.coordinates.x + direction.x / zoomLevel;
 					const newY = selectedNode.coordinates.y + direction.y / zoomLevel;
-					selectedNode.coordinates = { x: newX < 0 ? 0 : newX, y: newY < 0 ? 0 : newY };
+					onNodeMoved({ x: newX < 0 ? 0 : newX, y: newY < 0 ? 0 : newY });
 				}
 			} else {
 				const newX = globalPosition.x + direction.x;
@@ -144,7 +159,6 @@
 			},
 			title: type
 		};
-		canvasNodes.push(node);
 		onNodeDraw(node, type);
 		destroyActionMenuIfPossible();
 		drawLoop();
@@ -154,7 +168,6 @@
 		destroyActionMenuIfPossible();
 		if (event.button === 0) {
 			if (selectedNodeId) {
-				const selectedNode = canvasNodes.find((node) => node.id === selectedNodeId);
 				if (selectedNode) {
 					isMouseWithinNodeBoundaries = computeCollisionForNode(selectedNode, {
 						x: event.clientX,
@@ -200,6 +213,7 @@
 	function selectElementIfPossible(event: MouseEvent) {
 		if (event.button === 0) {
 			selectedNodeId = getCollidedNodeIdWithCoordinates({ x: event.clientX, y: event.clientY });
+			onNodeSelected(selectedNodeId);
 			drawLoop();
 		}
 	}
