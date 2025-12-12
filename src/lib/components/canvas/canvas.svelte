@@ -45,9 +45,11 @@
 	function drawNodes() {
 		for (let node of canvasNodes) {
 			if (selectedNodeId === node.id) {
+				context.lineWidth = 5;
 				context.strokeStyle = '#ff9933';
 				context.fillStyle = '#f6f6f6';
 			} else {
+				context.lineWidth = 2;
 				context.strokeStyle = '#585858';
 				context.fillStyle = '#fdfdfd';
 			}
@@ -62,6 +64,16 @@
 			);
 			context.stroke();
 			context.fill();
+			context.fillStyle = '#333333';
+			context.lineWidth = 1;
+			context.strokeStyle = '#101010';
+			const fontSize = (12 * zoomLevel).toFixed(0);
+			context.font = `${fontSize}px Helvetica`;
+			context.fillText(
+				node.title,
+				nodeGlobalCoordinate.x,
+				nodeGlobalCoordinate.y + (NODE_DIMENSION + 15) * zoomLevel
+			);
 			context.closePath();
 		}
 	}
@@ -76,7 +88,7 @@
 		for (let j = globalPosition.y; j < canvas.height; j += 50 * zoomLevel) {
 			for (let i = globalPosition.x; i < canvas.width; i += 50 * zoomLevel) {
 				context.strokeStyle = '#ffaf44';
-				context.strokeStyle = '1px';
+				context.lineWidth = 1;
 				const fromX = Math.max(i - 3 * zoomLevel, 0);
 				const toX = Math.max(i + 3 * zoomLevel, 0);
 				context.moveTo(fromX, j);
