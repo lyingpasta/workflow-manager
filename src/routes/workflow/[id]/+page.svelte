@@ -73,6 +73,7 @@
 		{width}
 		{height}
 		{selectedNode}
+		{nodeFlowArrows}
 		onNodeDraw={createNewNode}
 		onNodeSelected={selectNode}
 		onNodeMoved={moveNode}

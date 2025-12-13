@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { mount, onMount, unmount } from 'svelte';
 	import ActionMenu from './action-menu.svelte';
-	import type { NodeType } from '$lib/types/nodes';
+	import type { NodeFlowArrow, NodeType } from '$lib/types/nodes';
 	import type { CanvasNode, Coordinates } from '$lib/types/canvas';
 	import Button from '../button.svelte';
 	import { MENU_HEIGHT, MENU_WIDTH } from './value-object';
@@ -10,6 +10,7 @@
 	type ZoomLevel = number;
 	type InputProps = {
 		readonly canvasNodes: CanvasNode[];
+		readonly nodeFlowArrows: NodeFlowArrow[];
 		readonly width: number;
 		readonly height: number;
 		readonly selectedNode: CanvasNode | undefined;
@@ -44,8 +45,13 @@
 	let menuCoordinates: { x: number; y: number } = $state({ x: 0, y: 0 });
 	let actionMenuMounted: any | undefined = $state.raw(undefined);
 	let isMouseWithinNodeBoundaries: boolean = $state(false);
-	let isMouseWithinEctrodeBoudaries: boolean = $state(false);
+	let maybeElectrodeWithinBoundaries:
+		| { node: CanvasNode; electrode: 'anode' | 'cathode' }
+		| undefined = $state(undefined);
 	let cursor: string = $state('cursor-grab');
+	let flowArrowBuffer:
+		| { arrow: { from: Coordinates; to: Coordinates }; state: 'attached' | 'detached' }
+		| undefined = $state(undefined);
 
 	onMount(() => {
 		context = canvas.getContext('2d')!;
@@ -62,12 +68,37 @@
 		fillBackground();
 		drawReference();
 		drawNodes();
+		drawFlowArrows();
+	}
+
+	function drawFlowArrows() {
+		if (flowArrowBuffer) {
+			context.beginPath();
+			context.moveTo(
+				fromGlobalCoordinates(flowArrowBuffer.arrow.from).x,
+				fromGlobalCoordinates(flowArrowBuffer.arrow.from).y
+			);
+			context.lineTo(
+				fromGlobalCoordinates(flowArrowBuffer.arrow.to).x,
+				fromGlobalCoordinates(flowArrowBuffer.arrow.to).y
+			);
+			context.stroke();
+			context.fill();
+			context.closePath();
+		}
 	}
 
 	function toGlobalCoordinates(coordinates: Coordinates): Coordinates {
 		return {
 			x: coordinates.x * zoomLevel + globalPosition.x,
 			y: coordinates.y * zoomLevel + globalPosition.y
+		};
+	}
+
+	function fromGlobalCoordinates(coordinates: Coordinates): Coordinates {
+		return {
+			x: (coordinates.x - globalPosition.x) / zoomLevel,
+			y: (coordinates.y - globalPosition.y) / zoomLevel
 		};
 	}
 
@@ -87,12 +118,26 @@
 		context.closePath();
 	}
 
+	function getCathodeCoordinatesForNode(nodeCoordinates: Coordinates) {
+		return {
+			x: nodeCoordinates.x + (NODE_DIMENSION + 5) * zoomLevel,
+			y: nodeCoordinates.y + (NODE_DIMENSION / 2) * zoomLevel
+		};
+	}
+
+	function getAnodeCoordinatesForNode(nodeCoordinates: Coordinates) {
+		return {
+			x: nodeCoordinates.x - 5 * zoomLevel,
+			y: nodeCoordinates.y + (NODE_DIMENSION / 2) * zoomLevel
+		};
+	}
+
 	function drawAnodes(node: CanvasNode) {
 		const nodeGlobalCoordinate = toGlobalCoordinates(node.coordinates);
 		context.beginPath();
 		context.arc(
-			nodeGlobalCoordinate.x + (NODE_DIMENSION + 5) * zoomLevel,
-			nodeGlobalCoordinate.y + (NODE_DIMENSION / 2) * zoomLevel,
+			getAnodeCoordinatesForNode(nodeGlobalCoordinate).x,
+			getAnodeCoordinatesForNode(nodeGlobalCoordinate).y,
 			ELECTRODE_RADIUS * zoomLevel,
 			0,
 			2 * Math.PI
@@ -106,8 +151,8 @@
 		const nodeGlobalCoordinate = toGlobalCoordinates(node.coordinates);
 		context.beginPath();
 		context.arc(
-			nodeGlobalCoordinate.x - 5 * zoomLevel,
-			nodeGlobalCoordinate.y + (NODE_DIMENSION / 2) * zoomLevel,
+			getCathodeCoordinatesForNode(nodeGlobalCoordinate).x,
+			getCathodeCoordinatesForNode(nodeGlobalCoordinate).y,
 			ELECTRODE_RADIUS * zoomLevel,
 			0,
 			2 * Math.PI
@@ -135,11 +180,20 @@
 
 	function drawNodes() {
 		for (let node of canvasNodes) {
-			if (editorMode === 'arrow') {
+			if (
+				editorMode === 'arrow' &&
+				maybeElectrodeWithinBoundaries &&
+				maybeElectrodeWithinBoundaries.electrode === 'anode' &&
+				maybeElectrodeWithinBoundaries.node.id !== node.id
+			) {
 				context.lineWidth = 5;
 				context.strokeStyle = '#339033';
 				context.fillStyle = '#33aa33';
-			} else if (isMouseWithinEctrodeBoudaries) {
+			} else if (
+				maybeElectrodeWithinBoundaries &&
+				maybeElectrodeWithinBoundaries.node.id === node.id &&
+				maybeElectrodeWithinBoundaries.electrode === 'cathode'
+			) {
 				context.lineWidth = 5;
 				context.strokeStyle = '#ff9933';
 				context.fillStyle = '#f6f6f6';
@@ -149,6 +203,29 @@
 				context.fillStyle = '#fdfdfd';
 			}
 			drawCathodes(node);
+
+			if (
+				editorMode === 'arrow' &&
+				maybeElectrodeWithinBoundaries &&
+				maybeElectrodeWithinBoundaries.electrode === 'cathode' &&
+				maybeElectrodeWithinBoundaries.node.id !== node.id
+			) {
+				context.lineWidth = 5;
+				context.strokeStyle = '#339033';
+				context.fillStyle = '#33aa33';
+			} else if (
+				maybeElectrodeWithinBoundaries &&
+				maybeElectrodeWithinBoundaries.node.id === node.id &&
+				maybeElectrodeWithinBoundaries.electrode === 'anode'
+			) {
+				context.lineWidth = 5;
+				context.strokeStyle = '#ff9933';
+				context.fillStyle = '#f6f6f6';
+			} else {
+				context.lineWidth = 2;
+				context.strokeStyle = '#585858';
+				context.fillStyle = '#fdfdfd';
+			}
 			drawAnodes(node);
 
 			if (selectedNode && selectedNode.id === node.id) {
@@ -202,11 +279,43 @@
 		drawLoop();
 	}
 
+	function addFlowArrow(from: Coordinates, to: Coordinates) {
+		flowArrowBuffer = {
+			arrow: {
+				from,
+				to
+			},
+			state: 'detached'
+		};
+	}
+
 	function move(event: MouseEvent) {
 		if (isLeftClickDown) {
 			const direction = { x: event.movementX, y: event.movementY };
-			if (isMouseWithinEctrodeBoudaries) {
+			if (editorMode === 'arrow') {
 				// draw flowArrow
+				const from = match(maybeElectrodeWithinBoundaries)
+					.with(
+						{
+							electrode: 'anode'
+						},
+						(anode) => getAnodeCoordinatesForNode(toGlobalCoordinates(anode.node.coordinates))
+					)
+					.with(
+						{
+							electrode: 'cathode'
+						},
+						(cathode) => getCathodeCoordinatesForNode(toGlobalCoordinates(cathode.node.coordinates))
+					)
+					.run();
+
+				addFlowArrow(
+					toGlobalCoordinates(from),
+					toGlobalCoordinates({
+						x: event.clientX,
+						y: event.clientY
+					})
+				);
 			} else if (isMouseWithinNodeBoundaries) {
 				if (selectedNode) {
 					const newX = selectedNode.coordinates.x + direction.x / zoomLevel;
@@ -233,23 +342,31 @@
 			drawLoop();
 		} else {
 			for (let node of canvasNodes) {
-				isMouseWithinEctrodeBoudaries =
-					computeCollisionForElectrode(
+				maybeElectrodeWithinBoundaries = match({
+					anodeCollision: computeCollisionForElectrode(
 						node,
 						{
 							x: event.clientX,
 							y: event.clientY
 						},
 						'anode'
-					) ||
-					computeCollisionForElectrode(
+					),
+					cathodeCollision: computeCollisionForElectrode(
 						node,
 						{
 							x: event.clientX,
 							y: event.clientY
 						},
 						'cathode'
-					);
+					)
+				})
+					.with({ anodeCollision: true }, () => ({ node: node, electrode: 'anode' as const }))
+					.with({ cathodeCollision: true }, () => ({
+						node: node,
+						electrode: 'cathode' as const
+					}))
+					.otherwise(() => undefined);
+				if (maybeElectrodeWithinBoundaries) break;
 			}
 		}
 	}
@@ -258,8 +375,8 @@
 		const node = {
 			id: window.crypto.randomUUID(),
 			coordinates: {
-				x: (menuCoordinates.x - globalPosition.x) / zoomLevel - NODE_DIMENSION / 2,
-				y: (menuCoordinates.y - globalPosition.y) / zoomLevel - NODE_DIMENSION / 2
+				x: fromGlobalCoordinates(menuCoordinates).x - NODE_DIMENSION / 2,
+				y: fromGlobalCoordinates(menuCoordinates).y - NODE_DIMENSION / 2
 			},
 			title: type
 		};
@@ -279,7 +396,7 @@
 			}
 			isRightClickDown = false;
 			isLeftClickDown = true;
-			editorMode = isMouseWithinEctrodeBoudaries && isLeftClickDown ? 'arrow' : 'normal';
+			editorMode = maybeElectrodeWithinBoundaries && isLeftClickDown ? 'arrow' : 'normal';
 		} else if (event.button === 2) {
 			menuCoordinates = { x: event.clientX, y: event.clientY };
 			isLeftClickDown = false;
@@ -291,6 +408,7 @@
 		isLeftClickDown = false;
 		isRightClickDown = false;
 		editorMode = 'normal';
+		if (flowArrowBuffer?.state === 'detached') flowArrowBuffer = undefined;
 		destroyActionMenuIfPossible();
 		drawLoop();
 	}
@@ -381,12 +499,12 @@
 
 	$effect(() => {
 		cursor = match({
-			isMouseWithinEctrodeBoudaries,
+			maybeElectrodeWithinBoundaries,
 			isLeftClickDown,
 			editorMode
 		})
 			.with({ editorMode: 'arrow' }, () => 'cursor-pointer')
-			.with({ isMouseWithinEctrodeBoudaries: true }, () => 'cursor-pointer')
+			.with({ maybeElectrodeWithinBoundaries: P.nonNullable }, () => 'cursor-pointer')
 			.with({ isLeftClickDown: true }, () => 'cursor-grabbing')
 			.otherwise(() => 'cursor-grab');
 	});
