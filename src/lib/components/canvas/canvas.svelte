@@ -158,8 +158,8 @@
 		const node = {
 			id: window.crypto.randomUUID(),
 			coordinates: {
-				x: menuCoordinates.x / zoomLevel - globalPosition.x - NODE_DIMENSION / 2,
-				y: menuCoordinates.y / zoomLevel - globalPosition.x - NODE_DIMENSION / 2
+				x: (menuCoordinates.x - NODE_DIMENSION / 2 - globalPosition.x) / zoomLevel,
+				y: (menuCoordinates.y - NODE_DIMENSION / 2 - globalPosition.y) / zoomLevel
 			},
 			title: type
 		};
