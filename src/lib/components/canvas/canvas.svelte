@@ -4,6 +4,7 @@
 	import type { NodeType } from '$lib/types/nodes';
 	import type { CanvasNode, Coordinates } from '$lib/types/canvas';
 	import Button from '../button.svelte';
+	import { MENU_HEIGHT, MENU_WIDTH } from './value-object';
 
 	type ZoomLevel = number;
 	type InputProps = {
@@ -17,6 +18,8 @@
 	};
 
 	const NODE_DIMENSION = 100;
+	const MIN_CANVAS_BOUNDARY = -500;
+	const MAX_CANVAS_BOUNDARY = 0;
 
 	let {
 		canvasNodes,
@@ -148,7 +151,19 @@
 			} else {
 				const newX = globalPosition.x + direction.x;
 				const newY = globalPosition.y + direction.y;
-				globalPosition = { x: newX > 0 ? 0 : newX, y: newY > 0 ? 0 : newY };
+				let boundedX = 0;
+				let boundedY = 0;
+				if (direction.x < 0) {
+					boundedX = Math.max(MIN_CANVAS_BOUNDARY * zoomLevel, newX);
+				} else {
+					boundedX = Math.min(MAX_CANVAS_BOUNDARY, newX);
+				}
+				if (direction.y < 0) {
+					boundedY = Math.max(MIN_CANVAS_BOUNDARY * zoomLevel, newY);
+				} else {
+					boundedY = Math.min(MAX_CANVAS_BOUNDARY, newY);
+				}
+				globalPosition = { x: boundedX, y: boundedY };
 			}
 			drawLoop();
 		}
@@ -158,8 +173,8 @@
 		const node = {
 			id: window.crypto.randomUUID(),
 			coordinates: {
-				x: (menuCoordinates.x - NODE_DIMENSION / 2 - globalPosition.x) / zoomLevel,
-				y: (menuCoordinates.y - NODE_DIMENSION / 2 - globalPosition.y) / zoomLevel
+				x: (menuCoordinates.x - globalPosition.x) / zoomLevel - NODE_DIMENSION / 2,
+				y: (menuCoordinates.y - globalPosition.y) / zoomLevel - NODE_DIMENSION / 2
 			},
 			title: type
 		};
