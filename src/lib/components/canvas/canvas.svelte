@@ -17,6 +17,7 @@
 		onNodeDraw: (...props: any[]) => any;
 		onNodeSelected: (...props: any[]) => any;
 		onNodeMoved: (...props: any[]) => any;
+		onFlowArrowAttached: (...props: any[]) => any;
 	};
 
 	const NODE_DIMENSION = 100;
@@ -26,12 +27,14 @@
 
 	let {
 		canvasNodes,
+		nodeFlowArrows,
 		width,
 		height,
 		selectedNode,
 		onNodeDraw,
 		onNodeSelected,
-		onNodeMoved
+		onNodeMoved,
+		onFlowArrowAttached
 	}: InputProps = $props();
 
 	let canvas: HTMLCanvasElement;
@@ -50,7 +53,10 @@
 		| undefined = $state(undefined);
 	let cursor: string = $state('cursor-grab');
 	let flowArrowBuffer:
-		| { arrow: { from: Coordinates; to: Coordinates }; state: 'attached' | 'detached' }
+		| {
+				arrow: { from: { node: CanvasNode; electrode: 'anode' | 'cathode' }; to: Coordinates };
+				state: 'attached' | 'detached';
+		  }
 		| undefined = $state(undefined);
 
 	onMount(() => {
@@ -60,6 +66,7 @@
 
 	$effect(() => {
 		selectedNode;
+		nodeFlowArrows;
 		drawLoop();
 	});
 
@@ -72,12 +79,44 @@
 	}
 
 	function drawFlowArrows() {
+		for (let arrow of nodeFlowArrows) {
+			const fromNode = canvasNodes.find((node) => node.id === arrow.fromNodeId);
+			const toNode = canvasNodes.find((node) => node.id === arrow.toNodeId);
+			if (fromNode && toNode) {
+				context.beginPath();
+				context.moveTo(
+					getCathodeCoordinatesForNode(toGlobalCoordinates(fromNode.coordinates)).x,
+					getCathodeCoordinatesForNode(toGlobalCoordinates(fromNode.coordinates)).y
+				);
+				context.lineTo(
+					getAnodeCoordinatesForNode(toGlobalCoordinates(toNode.coordinates)).x,
+					getAnodeCoordinatesForNode(toGlobalCoordinates(toNode.coordinates)).y
+				);
+				context.stroke();
+				context.fill();
+				context.closePath();
+			}
+		}
 		if (flowArrowBuffer) {
 			context.beginPath();
-			context.moveTo(
-				fromGlobalCoordinates(flowArrowBuffer.arrow.from).x,
-				fromGlobalCoordinates(flowArrowBuffer.arrow.from).y
-			);
+			if (flowArrowBuffer.arrow.from.electrode === 'cathode')
+				context.moveTo(
+					getCathodeCoordinatesForNode(
+						toGlobalCoordinates(flowArrowBuffer.arrow.from.node.coordinates)
+					).x,
+					getCathodeCoordinatesForNode(
+						toGlobalCoordinates(flowArrowBuffer.arrow.from.node.coordinates)
+					).y
+				);
+			else
+				context.moveTo(
+					getAnodeCoordinatesForNode(
+						toGlobalCoordinates(flowArrowBuffer.arrow.from.node.coordinates)
+					).x,
+					getAnodeCoordinatesForNode(
+						toGlobalCoordinates(flowArrowBuffer.arrow.from.node.coordinates)
+					).y
+				);
 			context.lineTo(
 				fromGlobalCoordinates(flowArrowBuffer.arrow.to).x,
 				fromGlobalCoordinates(flowArrowBuffer.arrow.to).y
@@ -279,7 +318,10 @@
 		drawLoop();
 	}
 
-	function addFlowArrow(from: Coordinates, to: Coordinates) {
+	function addFlowArrow(
+		from: { node: CanvasNode; electrode: 'anode' | 'cathode' },
+		to: Coordinates
+	) {
 		flowArrowBuffer = {
 			arrow: {
 				from,
@@ -299,18 +341,18 @@
 						{
 							electrode: 'anode'
 						},
-						(anode) => getAnodeCoordinatesForNode(toGlobalCoordinates(anode.node.coordinates))
+						(anode) => anode
 					)
 					.with(
 						{
 							electrode: 'cathode'
 						},
-						(cathode) => getCathodeCoordinatesForNode(toGlobalCoordinates(cathode.node.coordinates))
+						(cathode) => cathode
 					)
 					.run();
 
 				addFlowArrow(
-					toGlobalCoordinates(from),
+					from,
 					toGlobalCoordinates({
 						x: event.clientX,
 						y: event.clientY
@@ -411,6 +453,71 @@
 		if (flowArrowBuffer?.state === 'detached') flowArrowBuffer = undefined;
 		destroyActionMenuIfPossible();
 		drawLoop();
+	}
+
+	function attachArrowToNode(event: MouseEvent) {
+		if (!flowArrowBuffer) {
+			return;
+		}
+
+		for (let node of canvasNodes) {
+			const maybeToAttachTo = match({
+				anodeCollision: computeCollisionForElectrode(
+					node,
+					{
+						x: event.clientX,
+						y: event.clientY
+					},
+					'anode'
+				),
+				cathodeCollision: computeCollisionForElectrode(
+					node,
+					{
+						x: event.clientX,
+						y: event.clientY
+					},
+					'cathode'
+				)
+			})
+				.with({ anodeCollision: true }, () => ({ node: node, electrode: 'anode' as const }))
+				.with({ cathodeCollision: true }, () => ({
+					node: node,
+					electrode: 'cathode' as const
+				}))
+				.otherwise(() => undefined);
+
+			if (maybeToAttachTo) {
+				const newFlowArrow = match({
+					maybeToAttachTo,
+					flowArrowBuffer
+				})
+					.with(
+						{
+							maybeToAttachTo: { electrode: 'anode' },
+							flowArrowBuffer: { arrow: { from: { electrode: 'cathode' } } }
+						},
+						() => ({
+							to: maybeToAttachTo.node satisfies CanvasNode,
+							from: flowArrowBuffer!.arrow.from.node satisfies CanvasNode
+						})
+					)
+					.with(
+						{
+							maybeToAttachTo: { electrode: 'cathode' },
+							flowArrowBuffer: { arrow: { from: { electrode: 'anode' } } }
+						},
+						() => ({
+							to: flowArrowBuffer!.arrow.from.node satisfies CanvasNode,
+							from: maybeToAttachTo.node satisfies CanvasNode
+						})
+					)
+					.run();
+				onFlowArrowAttached(newFlowArrow.from, newFlowArrow.to);
+				break;
+			}
+		}
+
+		resetClicks();
 	}
 
 	function drawActionMenuAroundMouse() {
@@ -517,7 +624,7 @@
 	{height}
 	bind:this={canvas}
 	onmousedown={updateMouseStateDependingOnButton}
-	onmouseup={resetClicks}
+	onmouseup={editorMode === 'arrow' ? attachArrowToNode : resetClicks}
 	onmousemove={move}
 	onclick={selectElementIfPossible}
 	oncontextmenu={(event) => event.preventDefault()}

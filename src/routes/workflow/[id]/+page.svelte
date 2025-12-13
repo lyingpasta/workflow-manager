@@ -53,6 +53,13 @@
 			}
 		});
 	}
+
+	function createFlowArrow(from: CanvasNode, to: CanvasNode) {
+		nodeFlowArrows.push({
+			fromNodeId: from.id,
+			toNodeId: to.id
+		});
+	}
 </script>
 
 <svelte:window bind:innerWidth={width} bind:innerHeight={height} />
@@ -74,6 +81,7 @@
 		{height}
 		{selectedNode}
 		{nodeFlowArrows}
+		onFlowArrowAttached={createFlowArrow}
 		onNodeDraw={createNewNode}
 		onNodeSelected={selectNode}
 		onNodeMoved={moveNode}
