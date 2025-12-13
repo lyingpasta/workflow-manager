@@ -3,12 +3,13 @@
 	import ModalContainer from '$lib/components/modal/modal-container.svelte';
 	import Toolbox from '$lib/components/toolbox.svelte';
 	import type { CanvasNode, Coordinates } from '$lib/types/canvas';
-	import type { NodeType } from '$lib/types/nodes';
+	import type { NodeFlowArrow, NodeType } from '$lib/types/nodes';
 	import { mount, unmount } from 'svelte';
 
 	let width: number = $state(0);
 	let height: number = $state(0);
 	let canvasNodes: CanvasNode[] = $state([]);
+	let nodeFlowArrows: NodeFlowArrow[] = $state([]);
 	let selectedNode: CanvasNode | undefined = $state(undefined);
 	let editNodeModal: any | undefined = $state.raw(undefined);
 

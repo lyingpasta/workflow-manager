@@ -18,7 +18,6 @@
 		} else {
 			colors = ` bg-gray-100 hover:bg-gray-300`;
 		}
-		console.log(type, colors);
 	});
 </script>
 

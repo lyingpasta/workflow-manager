@@ -5,6 +5,7 @@
 	import type { CanvasNode, Coordinates } from '$lib/types/canvas';
 	import Button from '../button.svelte';
 	import { MENU_HEIGHT, MENU_WIDTH } from './value-object';
+	import { match, P } from 'ts-pattern';
 
 	type ZoomLevel = number;
 	type InputProps = {
@@ -20,6 +21,7 @@
 	const NODE_DIMENSION = 100;
 	const MIN_CANVAS_BOUNDARY = -500;
 	const MAX_CANVAS_BOUNDARY = 0;
+	const ELECTRODE_RADIUS = 4;
 
 	let {
 		canvasNodes,
@@ -34,6 +36,7 @@
 	let canvas: HTMLCanvasElement;
 	let context: CanvasRenderingContext2D;
 
+	let editorMode: 'normal' | 'arrow' = $state('normal');
 	let zoomLevel: ZoomLevel = $state(1.5);
 	let isLeftClickDown: boolean = $state(false);
 	let isRightClickDown: boolean = $state(false);
@@ -41,6 +44,8 @@
 	let menuCoordinates: { x: number; y: number } = $state({ x: 0, y: 0 });
 	let actionMenuMounted: any | undefined = $state.raw(undefined);
 	let isMouseWithinNodeBoundaries: boolean = $state(false);
+	let isMouseWithinEctrodeBoudaries: boolean = $state(false);
+	let cursor: string = $state('cursor-grab');
 
 	onMount(() => {
 		context = canvas.getContext('2d')!;
@@ -66,8 +71,86 @@
 		};
 	}
 
+	function drawNode(node: CanvasNode) {
+		context.beginPath();
+		const nodeGlobalCoordinate = toGlobalCoordinates(node.coordinates);
+		context.roundRect(
+			nodeGlobalCoordinate.x,
+			nodeGlobalCoordinate.y,
+			NODE_DIMENSION * zoomLevel,
+			NODE_DIMENSION * zoomLevel,
+			[5 * zoomLevel]
+		);
+
+		context.stroke();
+		context.fill();
+		context.closePath();
+	}
+
+	function drawAnodes(node: CanvasNode) {
+		const nodeGlobalCoordinate = toGlobalCoordinates(node.coordinates);
+		context.beginPath();
+		context.arc(
+			nodeGlobalCoordinate.x + (NODE_DIMENSION + 5) * zoomLevel,
+			nodeGlobalCoordinate.y + (NODE_DIMENSION / 2) * zoomLevel,
+			ELECTRODE_RADIUS * zoomLevel,
+			0,
+			2 * Math.PI
+		);
+		context.stroke();
+		context.fill();
+		context.closePath();
+	}
+
+	function drawCathodes(node: CanvasNode) {
+		const nodeGlobalCoordinate = toGlobalCoordinates(node.coordinates);
+		context.beginPath();
+		context.arc(
+			nodeGlobalCoordinate.x - 5 * zoomLevel,
+			nodeGlobalCoordinate.y + (NODE_DIMENSION / 2) * zoomLevel,
+			ELECTRODE_RADIUS * zoomLevel,
+			0,
+			2 * Math.PI
+		);
+		context.stroke();
+		context.fill();
+		context.closePath();
+	}
+
+	function drawTitle(node: CanvasNode) {
+		const nodeGlobalCoordinate = toGlobalCoordinates(node.coordinates);
+		context.beginPath();
+		context.fillStyle = '#333333';
+		context.lineWidth = 1;
+		context.strokeStyle = '#101010';
+		const fontSize = (12 * zoomLevel).toFixed(0);
+		context.font = `${fontSize}px Helvetica`;
+		context.fillText(
+			node.title,
+			nodeGlobalCoordinate.x,
+			nodeGlobalCoordinate.y + (NODE_DIMENSION + 15) * zoomLevel
+		);
+		context.closePath();
+	}
+
 	function drawNodes() {
 		for (let node of canvasNodes) {
+			if (editorMode === 'arrow') {
+				context.lineWidth = 5;
+				context.strokeStyle = '#339033';
+				context.fillStyle = '#33aa33';
+			} else if (isMouseWithinEctrodeBoudaries) {
+				context.lineWidth = 5;
+				context.strokeStyle = '#ff9933';
+				context.fillStyle = '#f6f6f6';
+			} else {
+				context.lineWidth = 2;
+				context.strokeStyle = '#585858';
+				context.fillStyle = '#fdfdfd';
+			}
+			drawCathodes(node);
+			drawAnodes(node);
+
 			if (selectedNode && selectedNode.id === node.id) {
 				context.lineWidth = 5;
 				context.strokeStyle = '#ff9933';
@@ -77,28 +160,8 @@
 				context.strokeStyle = '#585858';
 				context.fillStyle = '#fdfdfd';
 			}
-			context.beginPath();
-			const nodeGlobalCoordinate = toGlobalCoordinates(node.coordinates);
-			context.roundRect(
-				nodeGlobalCoordinate.x,
-				nodeGlobalCoordinate.y,
-				NODE_DIMENSION * zoomLevel,
-				NODE_DIMENSION * zoomLevel,
-				[5 * zoomLevel]
-			);
-			context.stroke();
-			context.fill();
-			context.fillStyle = '#333333';
-			context.lineWidth = 1;
-			context.strokeStyle = '#101010';
-			const fontSize = (12 * zoomLevel).toFixed(0);
-			context.font = `${fontSize}px Helvetica`;
-			context.fillText(
-				node.title,
-				nodeGlobalCoordinate.x,
-				nodeGlobalCoordinate.y + (NODE_DIMENSION + 15) * zoomLevel
-			);
-			context.closePath();
+			drawNode(node);
+			drawTitle(node);
 		}
 	}
 
@@ -142,7 +205,9 @@
 	function move(event: MouseEvent) {
 		if (isLeftClickDown) {
 			const direction = { x: event.movementX, y: event.movementY };
-			if (isMouseWithinNodeBoundaries) {
+			if (isMouseWithinEctrodeBoudaries) {
+				// draw flowArrow
+			} else if (isMouseWithinNodeBoundaries) {
 				if (selectedNode) {
 					const newX = selectedNode.coordinates.x + direction.x / zoomLevel;
 					const newY = selectedNode.coordinates.y + direction.y / zoomLevel;
@@ -166,6 +231,26 @@
 				globalPosition = { x: boundedX, y: boundedY };
 			}
 			drawLoop();
+		} else {
+			for (let node of canvasNodes) {
+				isMouseWithinEctrodeBoudaries =
+					computeCollisionForElectrode(
+						node,
+						{
+							x: event.clientX,
+							y: event.clientY
+						},
+						'anode'
+					) ||
+					computeCollisionForElectrode(
+						node,
+						{
+							x: event.clientX,
+							y: event.clientY
+						},
+						'cathode'
+					);
+			}
 		}
 	}
 
@@ -194,6 +279,7 @@
 			}
 			isRightClickDown = false;
 			isLeftClickDown = true;
+			editorMode = isMouseWithinEctrodeBoudaries && isLeftClickDown ? 'arrow' : 'normal';
 		} else if (event.button === 2) {
 			menuCoordinates = { x: event.clientX, y: event.clientY };
 			isLeftClickDown = false;
@@ -204,6 +290,7 @@
 	function resetClicks() {
 		isLeftClickDown = false;
 		isRightClickDown = false;
+		editorMode = 'normal';
 		destroyActionMenuIfPossible();
 		drawLoop();
 	}
@@ -212,7 +299,7 @@
 		actionMenuMounted = mount(ActionMenu, {
 			target: document.body,
 			props: {
-				style: `top:${menuCoordinates.y - 120 / 2}px;left:${menuCoordinates.x - 360 / 2}px;z-index=40`,
+				style: `top:${menuCoordinates.y - MENU_HEIGHT / 2}px;left:${menuCoordinates.x - MENU_WIDTH / 2}px;z-index=40`,
 				onExtractClick: () => addNodeToContext('extract'),
 				onTransformClick: () => addNodeToContext('transform'),
 				onLoadClick: () => addNodeToContext('load')
@@ -265,11 +352,49 @@
 		}
 		return false;
 	}
+
+	function computeCollisionForElectrode(
+		node: CanvasNode,
+		coordinates: Coordinates,
+		electrode: 'anode' | 'cathode'
+	): boolean {
+		const center = match(electrode)
+			.with('anode', () =>
+				toGlobalCoordinates({
+					x: node.coordinates.x - 5,
+					y: node.coordinates.y + NODE_DIMENSION / 2
+				})
+			)
+			.with('cathode', () =>
+				toGlobalCoordinates({
+					x: node.coordinates.x + NODE_DIMENSION + 5,
+					y: node.coordinates.y + NODE_DIMENSION / 2
+				})
+			)
+			.exhaustive();
+
+		return (
+			Math.pow(coordinates.x - center.x, 2) + Math.pow(coordinates.y - center.y, 2) <
+			Math.pow(ELECTRODE_RADIUS + 3, 2)
+		);
+	}
+
+	$effect(() => {
+		cursor = match({
+			isMouseWithinEctrodeBoudaries,
+			isLeftClickDown,
+			editorMode
+		})
+			.with({ editorMode: 'arrow' }, () => 'cursor-pointer')
+			.with({ isMouseWithinEctrodeBoudaries: true }, () => 'cursor-pointer')
+			.with({ isLeftClickDown: true }, () => 'cursor-grabbing')
+			.otherwise(() => 'cursor-grab');
+	});
 </script>
 
 <canvas
 	id="canvas"
-	class={`top-0 absolute ${isLeftClickDown ? 'cursor-grabbing' : 'cursor-grab'}`}
+	class={`top-0 absolute ${cursor}`}
 	{width}
 	{height}
 	bind:this={canvas}
