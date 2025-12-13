@@ -79,6 +79,8 @@
 	}
 
 	function drawFlowArrows() {
+		context.lineWidth = 3;
+		context.strokeStyle = '#888888';
 		for (let arrow of nodeFlowArrows) {
 			const fromNode = canvasNodes.find((node) => node.id === arrow.fromNodeId);
 			const toNode = canvasNodes.find((node) => node.id === arrow.toNodeId);
@@ -88,12 +90,15 @@
 					getCathodeCoordinatesForNode(toGlobalCoordinates(fromNode.coordinates)).x,
 					getCathodeCoordinatesForNode(toGlobalCoordinates(fromNode.coordinates)).y
 				);
-				context.lineTo(
+				context.bezierCurveTo(
+					getCathodeCoordinatesForNode(toGlobalCoordinates(fromNode.coordinates)).x + 150,
+					getCathodeCoordinatesForNode(toGlobalCoordinates(fromNode.coordinates)).y,
+					getAnodeCoordinatesForNode(toGlobalCoordinates(toNode.coordinates)).x - 150,
+					getAnodeCoordinatesForNode(toGlobalCoordinates(toNode.coordinates)).y,
 					getAnodeCoordinatesForNode(toGlobalCoordinates(toNode.coordinates)).x,
 					getAnodeCoordinatesForNode(toGlobalCoordinates(toNode.coordinates)).y
 				);
 				context.stroke();
-				context.fill();
 				context.closePath();
 			}
 		}
@@ -122,7 +127,6 @@
 				fromGlobalCoordinates(flowArrowBuffer.arrow.to).y
 			);
 			context.stroke();
-			context.fill();
 			context.closePath();
 		}
 	}
