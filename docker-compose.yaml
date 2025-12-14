@@ -1,0 +1,15 @@
+services:
+  postgres: 
+    image: postgres/postgres@latest 
+    environment:
+      TZ: 'Japan'
+      PGTZ: 'Japan'
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: workflow 
+    volumes:
+      - .volumes/postgres:/var/lib/postgresql/data
+    ports:
+      - 5434:5432
+    command: ['postgres', '-c', 'log_statement=all']
+
