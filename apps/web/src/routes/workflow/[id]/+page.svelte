@@ -10,13 +10,13 @@
 
 	let width: number = $state(0);
 	let height: number = $state(0);
-	let canvasNodes: CanvasNode[] = $state([]);
+	let canvasNodes: Map<string, CanvasNode> = $state(new Map());
 	let nodeFlowArrows: NodeFlowArrow[] = $state([]);
 	let selectedNode: CanvasNode | undefined = $state(undefined);
 	let editNodeModal: any | undefined = $state.raw(undefined);
 
 	function createNewNode(canvasNode: CanvasNode, type: NodeType) {
-		canvasNodes.push(canvasNode);
+		canvasNodes.set(canvasNode.id, canvasNode);
 		notificationStore.add(`New ${type} node has been added`, 'info', undefined);
 	}
 
@@ -33,9 +33,9 @@
 	function deleteNode() {
 		return match(selectedNode)
 			.with(P.nonNullable, (node) => {
-				canvasNodes = canvasNodes.filter((node) => node.id !== node.id);
+				canvasNodes.delete(node.id);
 				nodeFlowArrows = nodeFlowArrows.filter(
-					(arrow) => arrow.fromNodeId !== node.id || arrow.toNodeId !== node.id
+					(arrow) => arrow.fromNodeId !== node.id && arrow.toNodeId !== node.id
 				);
 				selectedNode = undefined;
 				notificationStore.add(`Node ${node.title} has been deleted`, 'info', undefined);
@@ -54,9 +54,8 @@
 					notificationStore.add(`Node edit canceled`, 'info', undefined);
 				},
 				onCommitButtonPressed: (node: CanvasNode) => {
-					const nodeIndex = canvasNodes.findIndex(({ id }) => id === selectedNode!.id);
-					canvasNodes[nodeIndex] = node;
-					selectedNode = canvasNodes[nodeIndex];
+					canvasNodes.set(node.id, node);
+					selectedNode = canvasNodes.get(node.id);
 					unmount(editNodeModal);
 					editNodeModal = undefined;
 					notificationStore.add(`Node ${node.title} has been updated`, 'info', undefined);

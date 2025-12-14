@@ -9,7 +9,7 @@
 
 	type ZoomLevel = number;
 	type InputProps = {
-		readonly canvasNodes: CanvasNode[];
+		readonly canvasNodes: Map<string, CanvasNode>;
 		readonly nodeFlowArrows: NodeFlowArrow[];
 		readonly width: number;
 		readonly height: number;
@@ -43,7 +43,6 @@
 	let editorMode: 'normal' | 'arrow' = $state('normal');
 	let zoomLevel: ZoomLevel = $state(1.5);
 	let isLeftClickDown: boolean = $state(false);
-	let isRightClickDown: boolean = $state(false);
 	let globalPosition: { x: number; y: number } = $state({ x: 0, y: 0 });
 	let menuCoordinates: { x: number; y: number } = $state({ x: 0, y: 0 });
 	let actionMenuMounted: any | undefined = $state.raw(undefined);
@@ -82,8 +81,8 @@
 		context.lineWidth = 3;
 		context.strokeStyle = '#888888';
 		for (let arrow of nodeFlowArrows) {
-			const fromNode = canvasNodes.find((node) => node.id === arrow.fromNodeId);
-			const toNode = canvasNodes.find((node) => node.id === arrow.toNodeId);
+			const fromNode = canvasNodes.get(arrow.fromNodeId);
+			const toNode = canvasNodes.get(arrow.toNodeId);
 			if (fromNode && toNode) {
 				context.beginPath();
 				context.moveTo(
@@ -222,7 +221,7 @@
 	}
 
 	function drawNodes() {
-		for (let node of canvasNodes) {
+		for (let node of [...canvasNodes.values()].reverse()) {
 			if (
 				editorMode === 'arrow' &&
 				maybeElectrodeWithinBoundaries &&
@@ -387,7 +386,7 @@
 			}
 			drawLoop();
 		} else {
-			for (let node of canvasNodes) {
+			for (let node of [...canvasNodes.values()]) {
 				maybeElectrodeWithinBoundaries = match({
 					anodeCollision: computeCollisionForElectrode(
 						node,
@@ -440,7 +439,6 @@
 					y: event.clientY
 				});
 			}
-			isRightClickDown = false;
 			isLeftClickDown = true;
 			editorMode = maybeElectrodeWithinBoundaries && isLeftClickDown ? 'arrow' : 'normal';
 		} else if (event.button === 2) {
@@ -452,7 +450,6 @@
 
 	function resetClicks() {
 		isLeftClickDown = false;
-		isRightClickDown = false;
 		editorMode = 'normal';
 		if (flowArrowBuffer?.state === 'detached') flowArrowBuffer = undefined;
 		destroyActionMenuIfPossible();
@@ -464,7 +461,7 @@
 			return;
 		}
 
-		for (let node of canvasNodes) {
+		for (let node of [...canvasNodes.values()]) {
 			const maybeToAttachTo = match({
 				anodeCollision: computeCollisionForElectrode(
 					node,
@@ -555,7 +552,7 @@
 	}
 
 	function getCollidedNodeIdWithCoordinates(coordinates: Coordinates): CanvasNode | undefined {
-		for (let node of canvasNodes) {
+		for (let node of [...canvasNodes.values()]) {
 			const isColliding = computeCollisionForNode(node, coordinates);
 			if (isColliding) {
 				return node;
