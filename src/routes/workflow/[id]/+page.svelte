@@ -5,6 +5,7 @@
 	import type { CanvasNode, Coordinates } from '$lib/types/canvas';
 	import type { NodeFlowArrow, NodeType } from '$lib/types/nodes';
 	import { mount, unmount } from 'svelte';
+	import { match, P } from 'ts-pattern';
 
 	let width: number = $state(0);
 	let height: number = $state(0);
@@ -28,10 +29,15 @@
 	}
 
 	function deleteNode() {
-		if (selectedNode) {
-			canvasNodes = canvasNodes.filter((node) => node.id !== selectedNode!.id);
-			selectedNode = undefined;
-		}
+		return match(selectedNode)
+			.with(P.nonNullable, (node) => {
+				canvasNodes = canvasNodes.filter((node) => node.id !== node.id);
+				nodeFlowArrows = nodeFlowArrows.filter(
+					(arrow) => arrow.fromNodeId !== node.id || arrow.toNodeId !== node.id
+				);
+				selectedNode = undefined;
+			})
+			.run();
 	}
 
 	function editNode() {
