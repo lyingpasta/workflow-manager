@@ -2,6 +2,7 @@
 	import Canvas from '$lib/components/canvas/canvas.svelte';
 	import ModalContainer from '$lib/components/modal/modal-container.svelte';
 	import Toolbox from '$lib/components/toolbox.svelte';
+	import { notificationStore } from '$lib/stores/notification';
 	import type { CanvasNode, Coordinates } from '$lib/types/canvas';
 	import type { NodeFlowArrow, NodeType } from '$lib/types/nodes';
 	import { mount, unmount } from 'svelte';
@@ -16,6 +17,7 @@
 
 	function createNewNode(canvasNode: CanvasNode, type: NodeType) {
 		canvasNodes.push(canvasNode);
+		notificationStore.add(`New ${type} node has been added`, 'info', undefined);
 	}
 
 	function selectNode(node: CanvasNode) {
@@ -36,6 +38,7 @@
 					(arrow) => arrow.fromNodeId !== node.id || arrow.toNodeId !== node.id
 				);
 				selectedNode = undefined;
+				notificationStore.add(`Node ${node.title} has been deleted`, 'info', undefined);
 			})
 			.run();
 	}
@@ -48,6 +51,7 @@
 				onCancelButtonPressed: () => {
 					unmount(editNodeModal);
 					editNodeModal = undefined;
+					notificationStore.add(`Node edit canceled`, 'info', undefined);
 				},
 				onCommitButtonPressed: (node: CanvasNode) => {
 					const nodeIndex = canvasNodes.findIndex(({ id }) => id === selectedNode!.id);
@@ -55,6 +59,7 @@
 					selectedNode = canvasNodes[nodeIndex];
 					unmount(editNodeModal);
 					editNodeModal = undefined;
+					notificationStore.add(`Node ${node.title} has been updated`, 'info', undefined);
 				}
 			}
 		});

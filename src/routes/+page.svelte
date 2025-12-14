@@ -1,7 +1,3 @@
-<script>
-	import { goto } from '$app/navigation';
-</script>
-
 <div
 	class="w-full bg-amber-100 text-amber-600 pl-10 pt-5 pb-5 flex flex-row items-center gap-15 border-b border-solid"
 >
