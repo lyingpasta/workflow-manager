@@ -26,6 +26,7 @@
 
 	function moveNode(newCoordinates: Coordinates) {
 		if (selectedNode) {
+			canvasNodes.set(selectedNode.id, { ...selectedNode, coordinates: newCoordinates });
 			selectedNode.coordinates = newCoordinates;
 		}
 	}

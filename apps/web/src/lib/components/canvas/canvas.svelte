@@ -337,53 +337,64 @@
 	function move(event: MouseEvent) {
 		if (isLeftClickDown) {
 			const direction = { x: event.movementX, y: event.movementY };
-			if (editorMode === 'arrow') {
-				// draw flowArrow
-				const from = match(maybeElectrodeWithinBoundaries)
-					.with(
-						{
-							electrode: 'anode'
-						},
-						(anode) => anode
-					)
-					.with(
-						{
-							electrode: 'cathode'
-						},
-						(cathode) => cathode
-					)
-					.run();
+			match({
+				editorMode,
+				isMouseWithinNodeBoundaries,
+				selectedNode
+			})
+				.with({ editorMode: 'arrow', isMouseWithinNodeBoundaries: false }, () => {
+					const from = match(maybeElectrodeWithinBoundaries)
+						.with(
+							{
+								electrode: 'anode'
+							},
+							(anode) => anode
+						)
+						.with(
+							{
+								electrode: 'cathode'
+							},
+							(cathode) => cathode
+						)
+						.run();
 
-				addFlowArrow(
-					from,
-					toGlobalCoordinates({
-						x: event.clientX,
-						y: event.clientY
-					})
-				);
-			} else if (isMouseWithinNodeBoundaries) {
-				if (selectedNode) {
-					const newX = selectedNode.coordinates.x + direction.x / zoomLevel;
-					const newY = selectedNode.coordinates.y + direction.y / zoomLevel;
-					onNodeMoved({ x: newX < 0 ? 0 : newX, y: newY < 0 ? 0 : newY });
-				}
-			} else {
-				const newX = globalPosition.x + direction.x;
-				const newY = globalPosition.y + direction.y;
-				let boundedX = 0;
-				let boundedY = 0;
-				if (direction.x < 0) {
-					boundedX = Math.max(MIN_CANVAS_BOUNDARY * zoomLevel, newX);
-				} else {
-					boundedX = Math.min(MAX_CANVAS_BOUNDARY, newX);
-				}
-				if (direction.y < 0) {
-					boundedY = Math.max(MIN_CANVAS_BOUNDARY * zoomLevel, newY);
-				} else {
-					boundedY = Math.min(MAX_CANVAS_BOUNDARY, newY);
-				}
-				globalPosition = { x: boundedX, y: boundedY };
-			}
+					addFlowArrow(
+						from,
+						toGlobalCoordinates({
+							x: event.clientX,
+							y: event.clientY
+						})
+					);
+				})
+				.with(
+					{
+						editorMode: 'normal',
+						isMouseWithinNodeBoundaries: true,
+						selectedNode: P.nonNullable.select()
+					},
+					(selected) => {
+						const newX = selected.coordinates.x + direction.x / zoomLevel;
+						const newY = selected.coordinates.y + direction.y / zoomLevel;
+						onNodeMoved({ x: Math.max(0, newX), y: Math.max(0, newY) });
+					}
+				)
+				.otherwise(() => {
+					const newX = globalPosition.x + direction.x;
+					const newY = globalPosition.y + direction.y;
+					let boundedX = 0;
+					let boundedY = 0;
+					if (direction.x < 0) {
+						boundedX = Math.max(MIN_CANVAS_BOUNDARY * zoomLevel, newX);
+					} else {
+						boundedX = Math.min(MAX_CANVAS_BOUNDARY, newX);
+					}
+					if (direction.y < 0) {
+						boundedY = Math.max(MIN_CANVAS_BOUNDARY * zoomLevel, newY);
+					} else {
+						boundedY = Math.min(MAX_CANVAS_BOUNDARY, newY);
+					}
+					globalPosition = { x: boundedX, y: boundedY };
+				});
 			drawLoop();
 		} else {
 			for (let node of [...canvasNodes.values()]) {

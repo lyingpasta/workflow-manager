@@ -59,7 +59,7 @@
 
 <div id="main" class="relative w-screen h-screen">
 	{@render children()}
-	<div id="notifications" class="absolute z-100 top-3 right-5"></div>
+	<div id="notifications" class="absolute z-100 top-3 right-5 flex flex-col-reverse"></div>
 </div>
 
 <style>
