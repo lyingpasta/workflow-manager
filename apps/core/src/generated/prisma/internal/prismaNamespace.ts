@@ -385,8 +385,8 @@ type FieldRefInputType<Model, FieldType> = Model extends never ? never : FieldRe
 
 export const ModelName = {
   Workflow: 'Workflow',
-  WorkflowExecution: 'WorkflowExecution',
   WorkflowSchema: 'WorkflowSchema',
+  WorkflowExecution: 'WorkflowExecution',
   NodeExecution: 'NodeExecution'
 } as const
 
@@ -403,7 +403,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "workflow" | "workflowExecution" | "workflowSchema" | "nodeExecution"
+    modelProps: "workflow" | "workflowSchema" | "workflowExecution" | "nodeExecution"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -481,80 +481,6 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
-    WorkflowExecution: {
-      payload: Prisma.$WorkflowExecutionPayload<ExtArgs>
-      fields: Prisma.WorkflowExecutionFieldRefs
-      operations: {
-        findUnique: {
-          args: Prisma.WorkflowExecutionFindUniqueArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$WorkflowExecutionPayload> | null
-        }
-        findUniqueOrThrow: {
-          args: Prisma.WorkflowExecutionFindUniqueOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$WorkflowExecutionPayload>
-        }
-        findFirst: {
-          args: Prisma.WorkflowExecutionFindFirstArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$WorkflowExecutionPayload> | null
-        }
-        findFirstOrThrow: {
-          args: Prisma.WorkflowExecutionFindFirstOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$WorkflowExecutionPayload>
-        }
-        findMany: {
-          args: Prisma.WorkflowExecutionFindManyArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$WorkflowExecutionPayload>[]
-        }
-        create: {
-          args: Prisma.WorkflowExecutionCreateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$WorkflowExecutionPayload>
-        }
-        createMany: {
-          args: Prisma.WorkflowExecutionCreateManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        createManyAndReturn: {
-          args: Prisma.WorkflowExecutionCreateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$WorkflowExecutionPayload>[]
-        }
-        delete: {
-          args: Prisma.WorkflowExecutionDeleteArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$WorkflowExecutionPayload>
-        }
-        update: {
-          args: Prisma.WorkflowExecutionUpdateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$WorkflowExecutionPayload>
-        }
-        deleteMany: {
-          args: Prisma.WorkflowExecutionDeleteManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        updateMany: {
-          args: Prisma.WorkflowExecutionUpdateManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        updateManyAndReturn: {
-          args: Prisma.WorkflowExecutionUpdateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$WorkflowExecutionPayload>[]
-        }
-        upsert: {
-          args: Prisma.WorkflowExecutionUpsertArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$WorkflowExecutionPayload>
-        }
-        aggregate: {
-          args: Prisma.WorkflowExecutionAggregateArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.AggregateWorkflowExecution>
-        }
-        groupBy: {
-          args: Prisma.WorkflowExecutionGroupByArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.WorkflowExecutionGroupByOutputType>[]
-        }
-        count: {
-          args: Prisma.WorkflowExecutionCountArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.WorkflowExecutionCountAggregateOutputType> | number
-        }
-      }
-    }
     WorkflowSchema: {
       payload: Prisma.$WorkflowSchemaPayload<ExtArgs>
       fields: Prisma.WorkflowSchemaFieldRefs
@@ -626,6 +552,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.WorkflowSchemaCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.WorkflowSchemaCountAggregateOutputType> | number
+        }
+      }
+    }
+    WorkflowExecution: {
+      payload: Prisma.$WorkflowExecutionPayload<ExtArgs>
+      fields: Prisma.WorkflowExecutionFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.WorkflowExecutionFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WorkflowExecutionPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.WorkflowExecutionFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WorkflowExecutionPayload>
+        }
+        findFirst: {
+          args: Prisma.WorkflowExecutionFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WorkflowExecutionPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.WorkflowExecutionFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WorkflowExecutionPayload>
+        }
+        findMany: {
+          args: Prisma.WorkflowExecutionFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WorkflowExecutionPayload>[]
+        }
+        create: {
+          args: Prisma.WorkflowExecutionCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WorkflowExecutionPayload>
+        }
+        createMany: {
+          args: Prisma.WorkflowExecutionCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.WorkflowExecutionCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WorkflowExecutionPayload>[]
+        }
+        delete: {
+          args: Prisma.WorkflowExecutionDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WorkflowExecutionPayload>
+        }
+        update: {
+          args: Prisma.WorkflowExecutionUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WorkflowExecutionPayload>
+        }
+        deleteMany: {
+          args: Prisma.WorkflowExecutionDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.WorkflowExecutionUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.WorkflowExecutionUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WorkflowExecutionPayload>[]
+        }
+        upsert: {
+          args: Prisma.WorkflowExecutionUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WorkflowExecutionPayload>
+        }
+        aggregate: {
+          args: Prisma.WorkflowExecutionAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateWorkflowExecution>
+        }
+        groupBy: {
+          args: Prisma.WorkflowExecutionGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.WorkflowExecutionGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.WorkflowExecutionCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.WorkflowExecutionCountAggregateOutputType> | number
         }
       }
     }
@@ -753,18 +753,6 @@ export const WorkflowScalarFieldEnum = {
 export type WorkflowScalarFieldEnum = (typeof WorkflowScalarFieldEnum)[keyof typeof WorkflowScalarFieldEnum]
 
 
-export const WorkflowExecutionScalarFieldEnum = {
-  id: 'id',
-  status: 'status',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  workflowId: 'workflowId',
-  workflowSchemaId: 'workflowSchemaId'
-} as const
-
-export type WorkflowExecutionScalarFieldEnum = (typeof WorkflowExecutionScalarFieldEnum)[keyof typeof WorkflowExecutionScalarFieldEnum]
-
-
 export const WorkflowSchemaScalarFieldEnum = {
   id: 'id',
   createdAt: 'createdAt',
@@ -777,12 +765,27 @@ export const WorkflowSchemaScalarFieldEnum = {
 export type WorkflowSchemaScalarFieldEnum = (typeof WorkflowSchemaScalarFieldEnum)[keyof typeof WorkflowSchemaScalarFieldEnum]
 
 
+export const WorkflowExecutionScalarFieldEnum = {
+  id: 'id',
+  status: 'status',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  workflowId: 'workflowId',
+  workflowSchemaId: 'workflowSchemaId'
+} as const
+
+export type WorkflowExecutionScalarFieldEnum = (typeof WorkflowExecutionScalarFieldEnum)[keyof typeof WorkflowExecutionScalarFieldEnum]
+
+
 export const NodeExecutionScalarFieldEnum = {
   id: 'id',
   nodeId: 'nodeId',
+  nextNodeId: 'nextNodeId',
   status: 'status',
   input: 'input',
   output: 'output',
+  isStart: 'isStart',
+  isEnd: 'isEnd',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   workflowExecutionId: 'workflowExecutionId'
@@ -1003,8 +1006,8 @@ export type PrismaClientOptions = ({
 }
 export type GlobalOmitConfig = {
   workflow?: Prisma.WorkflowOmit
-  workflowExecution?: Prisma.WorkflowExecutionOmit
   workflowSchema?: Prisma.WorkflowSchemaOmit
+  workflowExecution?: Prisma.WorkflowExecutionOmit
   nodeExecution?: Prisma.NodeExecutionOmit
 }
 

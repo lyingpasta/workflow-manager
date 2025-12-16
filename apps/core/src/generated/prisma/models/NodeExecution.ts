@@ -27,7 +27,10 @@ export type AggregateNodeExecution = {
 export type NodeExecutionMinAggregateOutputType = {
   id: string | null
   nodeId: string | null
+  nextNodeId: string | null
   status: string | null
+  isStart: boolean | null
+  isEnd: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
   workflowExecutionId: string | null
@@ -36,7 +39,10 @@ export type NodeExecutionMinAggregateOutputType = {
 export type NodeExecutionMaxAggregateOutputType = {
   id: string | null
   nodeId: string | null
+  nextNodeId: string | null
   status: string | null
+  isStart: boolean | null
+  isEnd: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
   workflowExecutionId: string | null
@@ -45,9 +51,12 @@ export type NodeExecutionMaxAggregateOutputType = {
 export type NodeExecutionCountAggregateOutputType = {
   id: number
   nodeId: number
+  nextNodeId: number
   status: number
   input: number
   output: number
+  isStart: number
+  isEnd: number
   createdAt: number
   updatedAt: number
   workflowExecutionId: number
@@ -58,7 +67,10 @@ export type NodeExecutionCountAggregateOutputType = {
 export type NodeExecutionMinAggregateInputType = {
   id?: true
   nodeId?: true
+  nextNodeId?: true
   status?: true
+  isStart?: true
+  isEnd?: true
   createdAt?: true
   updatedAt?: true
   workflowExecutionId?: true
@@ -67,7 +79,10 @@ export type NodeExecutionMinAggregateInputType = {
 export type NodeExecutionMaxAggregateInputType = {
   id?: true
   nodeId?: true
+  nextNodeId?: true
   status?: true
+  isStart?: true
+  isEnd?: true
   createdAt?: true
   updatedAt?: true
   workflowExecutionId?: true
@@ -76,9 +91,12 @@ export type NodeExecutionMaxAggregateInputType = {
 export type NodeExecutionCountAggregateInputType = {
   id?: true
   nodeId?: true
+  nextNodeId?: true
   status?: true
   input?: true
   output?: true
+  isStart?: true
+  isEnd?: true
   createdAt?: true
   updatedAt?: true
   workflowExecutionId?: true
@@ -160,9 +178,12 @@ export type NodeExecutionGroupByArgs<ExtArgs extends runtime.Types.Extensions.In
 export type NodeExecutionGroupByOutputType = {
   id: string
   nodeId: string
+  nextNodeId: string | null
   status: string
   input: runtime.JsonValue | null
   output: runtime.JsonValue | null
+  isStart: boolean
+  isEnd: boolean
   createdAt: Date
   updatedAt: Date | null
   workflowExecutionId: string
@@ -192,9 +213,12 @@ export type NodeExecutionWhereInput = {
   NOT?: Prisma.NodeExecutionWhereInput | Prisma.NodeExecutionWhereInput[]
   id?: Prisma.StringFilter<"NodeExecution"> | string
   nodeId?: Prisma.StringFilter<"NodeExecution"> | string
+  nextNodeId?: Prisma.StringNullableFilter<"NodeExecution"> | string | null
   status?: Prisma.StringFilter<"NodeExecution"> | string
   input?: Prisma.JsonNullableFilter<"NodeExecution">
   output?: Prisma.JsonNullableFilter<"NodeExecution">
+  isStart?: Prisma.BoolFilter<"NodeExecution"> | boolean
+  isEnd?: Prisma.BoolFilter<"NodeExecution"> | boolean
   createdAt?: Prisma.DateTimeFilter<"NodeExecution"> | Date | string
   updatedAt?: Prisma.DateTimeNullableFilter<"NodeExecution"> | Date | string | null
   workflowExecutionId?: Prisma.StringFilter<"NodeExecution"> | string
@@ -204,9 +228,12 @@ export type NodeExecutionWhereInput = {
 export type NodeExecutionOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   nodeId?: Prisma.SortOrder
+  nextNodeId?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
   input?: Prisma.SortOrderInput | Prisma.SortOrder
   output?: Prisma.SortOrderInput | Prisma.SortOrder
+  isStart?: Prisma.SortOrder
+  isEnd?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   workflowExecutionId?: Prisma.SortOrder
@@ -219,9 +246,12 @@ export type NodeExecutionWhereUniqueInput = Prisma.AtLeast<{
   OR?: Prisma.NodeExecutionWhereInput[]
   NOT?: Prisma.NodeExecutionWhereInput | Prisma.NodeExecutionWhereInput[]
   nodeId?: Prisma.StringFilter<"NodeExecution"> | string
+  nextNodeId?: Prisma.StringNullableFilter<"NodeExecution"> | string | null
   status?: Prisma.StringFilter<"NodeExecution"> | string
   input?: Prisma.JsonNullableFilter<"NodeExecution">
   output?: Prisma.JsonNullableFilter<"NodeExecution">
+  isStart?: Prisma.BoolFilter<"NodeExecution"> | boolean
+  isEnd?: Prisma.BoolFilter<"NodeExecution"> | boolean
   createdAt?: Prisma.DateTimeFilter<"NodeExecution"> | Date | string
   updatedAt?: Prisma.DateTimeNullableFilter<"NodeExecution"> | Date | string | null
   workflowExecutionId?: Prisma.StringFilter<"NodeExecution"> | string
@@ -231,9 +261,12 @@ export type NodeExecutionWhereUniqueInput = Prisma.AtLeast<{
 export type NodeExecutionOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   nodeId?: Prisma.SortOrder
+  nextNodeId?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
   input?: Prisma.SortOrderInput | Prisma.SortOrder
   output?: Prisma.SortOrderInput | Prisma.SortOrder
+  isStart?: Prisma.SortOrder
+  isEnd?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   workflowExecutionId?: Prisma.SortOrder
@@ -248,9 +281,12 @@ export type NodeExecutionScalarWhereWithAggregatesInput = {
   NOT?: Prisma.NodeExecutionScalarWhereWithAggregatesInput | Prisma.NodeExecutionScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"NodeExecution"> | string
   nodeId?: Prisma.StringWithAggregatesFilter<"NodeExecution"> | string
+  nextNodeId?: Prisma.StringNullableWithAggregatesFilter<"NodeExecution"> | string | null
   status?: Prisma.StringWithAggregatesFilter<"NodeExecution"> | string
   input?: Prisma.JsonNullableWithAggregatesFilter<"NodeExecution">
   output?: Prisma.JsonNullableWithAggregatesFilter<"NodeExecution">
+  isStart?: Prisma.BoolWithAggregatesFilter<"NodeExecution"> | boolean
+  isEnd?: Prisma.BoolWithAggregatesFilter<"NodeExecution"> | boolean
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"NodeExecution"> | Date | string
   updatedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"NodeExecution"> | Date | string | null
   workflowExecutionId?: Prisma.StringWithAggregatesFilter<"NodeExecution"> | string
@@ -259,9 +295,12 @@ export type NodeExecutionScalarWhereWithAggregatesInput = {
 export type NodeExecutionCreateInput = {
   id: string
   nodeId: string
+  nextNodeId?: string | null
   status?: string
   input?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   output?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isStart: boolean
+  isEnd: boolean
   createdAt?: Date | string
   updatedAt?: Date | string | null
   workflowExecution: Prisma.WorkflowExecutionCreateNestedOneWithoutNodeExectionsInput
@@ -270,9 +309,12 @@ export type NodeExecutionCreateInput = {
 export type NodeExecutionUncheckedCreateInput = {
   id: string
   nodeId: string
+  nextNodeId?: string | null
   status?: string
   input?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   output?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isStart: boolean
+  isEnd: boolean
   createdAt?: Date | string
   updatedAt?: Date | string | null
   workflowExecutionId: string
@@ -281,9 +323,12 @@ export type NodeExecutionUncheckedCreateInput = {
 export type NodeExecutionUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   nodeId?: Prisma.StringFieldUpdateOperationsInput | string
+  nextNodeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
   input?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   output?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isStart?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isEnd?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   workflowExecution?: Prisma.WorkflowExecutionUpdateOneRequiredWithoutNodeExectionsNestedInput
@@ -292,9 +337,12 @@ export type NodeExecutionUpdateInput = {
 export type NodeExecutionUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   nodeId?: Prisma.StringFieldUpdateOperationsInput | string
+  nextNodeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
   input?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   output?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isStart?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isEnd?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   workflowExecutionId?: Prisma.StringFieldUpdateOperationsInput | string
@@ -303,9 +351,12 @@ export type NodeExecutionUncheckedUpdateInput = {
 export type NodeExecutionCreateManyInput = {
   id: string
   nodeId: string
+  nextNodeId?: string | null
   status?: string
   input?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   output?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isStart: boolean
+  isEnd: boolean
   createdAt?: Date | string
   updatedAt?: Date | string | null
   workflowExecutionId: string
@@ -314,9 +365,12 @@ export type NodeExecutionCreateManyInput = {
 export type NodeExecutionUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   nodeId?: Prisma.StringFieldUpdateOperationsInput | string
+  nextNodeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
   input?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   output?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isStart?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isEnd?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
@@ -324,9 +378,12 @@ export type NodeExecutionUpdateManyMutationInput = {
 export type NodeExecutionUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   nodeId?: Prisma.StringFieldUpdateOperationsInput | string
+  nextNodeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
   input?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   output?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isStart?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isEnd?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   workflowExecutionId?: Prisma.StringFieldUpdateOperationsInput | string
@@ -345,9 +402,12 @@ export type NodeExecutionOrderByRelationAggregateInput = {
 export type NodeExecutionCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   nodeId?: Prisma.SortOrder
+  nextNodeId?: Prisma.SortOrder
   status?: Prisma.SortOrder
   input?: Prisma.SortOrder
   output?: Prisma.SortOrder
+  isStart?: Prisma.SortOrder
+  isEnd?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   workflowExecutionId?: Prisma.SortOrder
@@ -356,7 +416,10 @@ export type NodeExecutionCountOrderByAggregateInput = {
 export type NodeExecutionMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   nodeId?: Prisma.SortOrder
+  nextNodeId?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  isStart?: Prisma.SortOrder
+  isEnd?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   workflowExecutionId?: Prisma.SortOrder
@@ -365,7 +428,10 @@ export type NodeExecutionMaxOrderByAggregateInput = {
 export type NodeExecutionMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   nodeId?: Prisma.SortOrder
+  nextNodeId?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  isStart?: Prisma.SortOrder
+  isEnd?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   workflowExecutionId?: Prisma.SortOrder
@@ -413,12 +479,19 @@ export type NodeExecutionUncheckedUpdateManyWithoutWorkflowExecutionNestedInput 
   deleteMany?: Prisma.NodeExecutionScalarWhereInput | Prisma.NodeExecutionScalarWhereInput[]
 }
 
+export type NullableStringFieldUpdateOperationsInput = {
+  set?: string | null
+}
+
 export type NodeExecutionCreateWithoutWorkflowExecutionInput = {
   id: string
   nodeId: string
+  nextNodeId?: string | null
   status?: string
   input?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   output?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isStart: boolean
+  isEnd: boolean
   createdAt?: Date | string
   updatedAt?: Date | string | null
 }
@@ -426,9 +499,12 @@ export type NodeExecutionCreateWithoutWorkflowExecutionInput = {
 export type NodeExecutionUncheckedCreateWithoutWorkflowExecutionInput = {
   id: string
   nodeId: string
+  nextNodeId?: string | null
   status?: string
   input?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   output?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isStart: boolean
+  isEnd: boolean
   createdAt?: Date | string
   updatedAt?: Date | string | null
 }
@@ -465,9 +541,12 @@ export type NodeExecutionScalarWhereInput = {
   NOT?: Prisma.NodeExecutionScalarWhereInput | Prisma.NodeExecutionScalarWhereInput[]
   id?: Prisma.StringFilter<"NodeExecution"> | string
   nodeId?: Prisma.StringFilter<"NodeExecution"> | string
+  nextNodeId?: Prisma.StringNullableFilter<"NodeExecution"> | string | null
   status?: Prisma.StringFilter<"NodeExecution"> | string
   input?: Prisma.JsonNullableFilter<"NodeExecution">
   output?: Prisma.JsonNullableFilter<"NodeExecution">
+  isStart?: Prisma.BoolFilter<"NodeExecution"> | boolean
+  isEnd?: Prisma.BoolFilter<"NodeExecution"> | boolean
   createdAt?: Prisma.DateTimeFilter<"NodeExecution"> | Date | string
   updatedAt?: Prisma.DateTimeNullableFilter<"NodeExecution"> | Date | string | null
   workflowExecutionId?: Prisma.StringFilter<"NodeExecution"> | string
@@ -476,9 +555,12 @@ export type NodeExecutionScalarWhereInput = {
 export type NodeExecutionCreateManyWorkflowExecutionInput = {
   id: string
   nodeId: string
+  nextNodeId?: string | null
   status?: string
   input?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   output?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isStart: boolean
+  isEnd: boolean
   createdAt?: Date | string
   updatedAt?: Date | string | null
 }
@@ -486,9 +568,12 @@ export type NodeExecutionCreateManyWorkflowExecutionInput = {
 export type NodeExecutionUpdateWithoutWorkflowExecutionInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   nodeId?: Prisma.StringFieldUpdateOperationsInput | string
+  nextNodeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
   input?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   output?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isStart?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isEnd?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
@@ -496,9 +581,12 @@ export type NodeExecutionUpdateWithoutWorkflowExecutionInput = {
 export type NodeExecutionUncheckedUpdateWithoutWorkflowExecutionInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   nodeId?: Prisma.StringFieldUpdateOperationsInput | string
+  nextNodeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
   input?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   output?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isStart?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isEnd?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
@@ -506,9 +594,12 @@ export type NodeExecutionUncheckedUpdateWithoutWorkflowExecutionInput = {
 export type NodeExecutionUncheckedUpdateManyWithoutWorkflowExecutionInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   nodeId?: Prisma.StringFieldUpdateOperationsInput | string
+  nextNodeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
   input?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   output?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isStart?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isEnd?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
@@ -518,9 +609,12 @@ export type NodeExecutionUncheckedUpdateManyWithoutWorkflowExecutionInput = {
 export type NodeExecutionSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   nodeId?: boolean
+  nextNodeId?: boolean
   status?: boolean
   input?: boolean
   output?: boolean
+  isStart?: boolean
+  isEnd?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   workflowExecutionId?: boolean
@@ -530,9 +624,12 @@ export type NodeExecutionSelect<ExtArgs extends runtime.Types.Extensions.Interna
 export type NodeExecutionSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   nodeId?: boolean
+  nextNodeId?: boolean
   status?: boolean
   input?: boolean
   output?: boolean
+  isStart?: boolean
+  isEnd?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   workflowExecutionId?: boolean
@@ -542,9 +639,12 @@ export type NodeExecutionSelectCreateManyAndReturn<ExtArgs extends runtime.Types
 export type NodeExecutionSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   nodeId?: boolean
+  nextNodeId?: boolean
   status?: boolean
   input?: boolean
   output?: boolean
+  isStart?: boolean
+  isEnd?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   workflowExecutionId?: boolean
@@ -554,15 +654,18 @@ export type NodeExecutionSelectUpdateManyAndReturn<ExtArgs extends runtime.Types
 export type NodeExecutionSelectScalar = {
   id?: boolean
   nodeId?: boolean
+  nextNodeId?: boolean
   status?: boolean
   input?: boolean
   output?: boolean
+  isStart?: boolean
+  isEnd?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   workflowExecutionId?: boolean
 }
 
-export type NodeExecutionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "nodeId" | "status" | "input" | "output" | "createdAt" | "updatedAt" | "workflowExecutionId", ExtArgs["result"]["nodeExecution"]>
+export type NodeExecutionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "nodeId" | "nextNodeId" | "status" | "input" | "output" | "isStart" | "isEnd" | "createdAt" | "updatedAt" | "workflowExecutionId", ExtArgs["result"]["nodeExecution"]>
 export type NodeExecutionInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   workflowExecution?: boolean | Prisma.WorkflowExecutionDefaultArgs<ExtArgs>
 }
@@ -581,9 +684,12 @@ export type $NodeExecutionPayload<ExtArgs extends runtime.Types.Extensions.Inter
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     nodeId: string
+    nextNodeId: string | null
     status: string
     input: runtime.JsonValue | null
     output: runtime.JsonValue | null
+    isStart: boolean
+    isEnd: boolean
     createdAt: Date
     updatedAt: Date | null
     workflowExecutionId: string
@@ -1013,9 +1119,12 @@ export interface Prisma__NodeExecutionClient<T, Null = never, ExtArgs extends ru
 export interface NodeExecutionFieldRefs {
   readonly id: Prisma.FieldRef<"NodeExecution", 'String'>
   readonly nodeId: Prisma.FieldRef<"NodeExecution", 'String'>
+  readonly nextNodeId: Prisma.FieldRef<"NodeExecution", 'String'>
   readonly status: Prisma.FieldRef<"NodeExecution", 'String'>
   readonly input: Prisma.FieldRef<"NodeExecution", 'Json'>
   readonly output: Prisma.FieldRef<"NodeExecution", 'Json'>
+  readonly isStart: Prisma.FieldRef<"NodeExecution", 'Boolean'>
+  readonly isEnd: Prisma.FieldRef<"NodeExecution", 'Boolean'>
   readonly createdAt: Prisma.FieldRef<"NodeExecution", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"NodeExecution", 'DateTime'>
   readonly workflowExecutionId: Prisma.FieldRef<"NodeExecution", 'String'>

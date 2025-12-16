@@ -23,15 +23,15 @@ export * from './enums.js';
  */
 export type Workflow = Prisma.WorkflowModel
 /**
- * Model WorkflowExecution
- * 
- */
-export type WorkflowExecution = Prisma.WorkflowExecutionModel
-/**
  * Model WorkflowSchema
  * 
  */
 export type WorkflowSchema = Prisma.WorkflowSchemaModel
+/**
+ * Model WorkflowExecution
+ * 
+ */
+export type WorkflowExecution = Prisma.WorkflowExecutionModel
 /**
  * Model NodeExecution
  * 

@@ -340,20 +340,6 @@ export type BoolFieldUpdateOperationsInput = {
   set?: boolean
 }
 
-export type WorkflowCreateNestedOneWithoutExecutionsInput = {
-  create?: Prisma.XOR<Prisma.WorkflowCreateWithoutExecutionsInput, Prisma.WorkflowUncheckedCreateWithoutExecutionsInput>
-  connectOrCreate?: Prisma.WorkflowCreateOrConnectWithoutExecutionsInput
-  connect?: Prisma.WorkflowWhereUniqueInput
-}
-
-export type WorkflowUpdateOneRequiredWithoutExecutionsNestedInput = {
-  create?: Prisma.XOR<Prisma.WorkflowCreateWithoutExecutionsInput, Prisma.WorkflowUncheckedCreateWithoutExecutionsInput>
-  connectOrCreate?: Prisma.WorkflowCreateOrConnectWithoutExecutionsInput
-  upsert?: Prisma.WorkflowUpsertWithoutExecutionsInput
-  connect?: Prisma.WorkflowWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.WorkflowUpdateToOneWithWhereWithoutExecutionsInput, Prisma.WorkflowUpdateWithoutExecutionsInput>, Prisma.WorkflowUncheckedUpdateWithoutExecutionsInput>
-}
-
 export type WorkflowCreateNestedOneWithoutWorkflowSchemasInput = {
   create?: Prisma.XOR<Prisma.WorkflowCreateWithoutWorkflowSchemasInput, Prisma.WorkflowUncheckedCreateWithoutWorkflowSchemasInput>
   connectOrCreate?: Prisma.WorkflowCreateOrConnectWithoutWorkflowSchemasInput
@@ -368,56 +354,18 @@ export type WorkflowUpdateOneRequiredWithoutWorkflowSchemasNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.WorkflowUpdateToOneWithWhereWithoutWorkflowSchemasInput, Prisma.WorkflowUpdateWithoutWorkflowSchemasInput>, Prisma.WorkflowUncheckedUpdateWithoutWorkflowSchemasInput>
 }
 
-export type WorkflowCreateWithoutExecutionsInput = {
-  id: string
-  name: string
-  createdAt?: Date | string
-  updatedAt?: Date | string | null
-  isActive?: boolean
-  workflowSchemas?: Prisma.WorkflowSchemaCreateNestedManyWithoutWorkflowInput
+export type WorkflowCreateNestedOneWithoutExecutionsInput = {
+  create?: Prisma.XOR<Prisma.WorkflowCreateWithoutExecutionsInput, Prisma.WorkflowUncheckedCreateWithoutExecutionsInput>
+  connectOrCreate?: Prisma.WorkflowCreateOrConnectWithoutExecutionsInput
+  connect?: Prisma.WorkflowWhereUniqueInput
 }
 
-export type WorkflowUncheckedCreateWithoutExecutionsInput = {
-  id: string
-  name: string
-  createdAt?: Date | string
-  updatedAt?: Date | string | null
-  isActive?: boolean
-  workflowSchemas?: Prisma.WorkflowSchemaUncheckedCreateNestedManyWithoutWorkflowInput
-}
-
-export type WorkflowCreateOrConnectWithoutExecutionsInput = {
-  where: Prisma.WorkflowWhereUniqueInput
-  create: Prisma.XOR<Prisma.WorkflowCreateWithoutExecutionsInput, Prisma.WorkflowUncheckedCreateWithoutExecutionsInput>
-}
-
-export type WorkflowUpsertWithoutExecutionsInput = {
-  update: Prisma.XOR<Prisma.WorkflowUpdateWithoutExecutionsInput, Prisma.WorkflowUncheckedUpdateWithoutExecutionsInput>
-  create: Prisma.XOR<Prisma.WorkflowCreateWithoutExecutionsInput, Prisma.WorkflowUncheckedCreateWithoutExecutionsInput>
-  where?: Prisma.WorkflowWhereInput
-}
-
-export type WorkflowUpdateToOneWithWhereWithoutExecutionsInput = {
-  where?: Prisma.WorkflowWhereInput
-  data: Prisma.XOR<Prisma.WorkflowUpdateWithoutExecutionsInput, Prisma.WorkflowUncheckedUpdateWithoutExecutionsInput>
-}
-
-export type WorkflowUpdateWithoutExecutionsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  workflowSchemas?: Prisma.WorkflowSchemaUpdateManyWithoutWorkflowNestedInput
-}
-
-export type WorkflowUncheckedUpdateWithoutExecutionsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  workflowSchemas?: Prisma.WorkflowSchemaUncheckedUpdateManyWithoutWorkflowNestedInput
+export type WorkflowUpdateOneRequiredWithoutExecutionsNestedInput = {
+  create?: Prisma.XOR<Prisma.WorkflowCreateWithoutExecutionsInput, Prisma.WorkflowUncheckedCreateWithoutExecutionsInput>
+  connectOrCreate?: Prisma.WorkflowCreateOrConnectWithoutExecutionsInput
+  upsert?: Prisma.WorkflowUpsertWithoutExecutionsInput
+  connect?: Prisma.WorkflowWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.WorkflowUpdateToOneWithWhereWithoutExecutionsInput, Prisma.WorkflowUpdateWithoutExecutionsInput>, Prisma.WorkflowUncheckedUpdateWithoutExecutionsInput>
 }
 
 export type WorkflowCreateWithoutWorkflowSchemasInput = {
@@ -470,6 +418,58 @@ export type WorkflowUncheckedUpdateWithoutWorkflowSchemasInput = {
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   executions?: Prisma.WorkflowExecutionUncheckedUpdateManyWithoutWorkflowNestedInput
+}
+
+export type WorkflowCreateWithoutExecutionsInput = {
+  id: string
+  name: string
+  createdAt?: Date | string
+  updatedAt?: Date | string | null
+  isActive?: boolean
+  workflowSchemas?: Prisma.WorkflowSchemaCreateNestedManyWithoutWorkflowInput
+}
+
+export type WorkflowUncheckedCreateWithoutExecutionsInput = {
+  id: string
+  name: string
+  createdAt?: Date | string
+  updatedAt?: Date | string | null
+  isActive?: boolean
+  workflowSchemas?: Prisma.WorkflowSchemaUncheckedCreateNestedManyWithoutWorkflowInput
+}
+
+export type WorkflowCreateOrConnectWithoutExecutionsInput = {
+  where: Prisma.WorkflowWhereUniqueInput
+  create: Prisma.XOR<Prisma.WorkflowCreateWithoutExecutionsInput, Prisma.WorkflowUncheckedCreateWithoutExecutionsInput>
+}
+
+export type WorkflowUpsertWithoutExecutionsInput = {
+  update: Prisma.XOR<Prisma.WorkflowUpdateWithoutExecutionsInput, Prisma.WorkflowUncheckedUpdateWithoutExecutionsInput>
+  create: Prisma.XOR<Prisma.WorkflowCreateWithoutExecutionsInput, Prisma.WorkflowUncheckedCreateWithoutExecutionsInput>
+  where?: Prisma.WorkflowWhereInput
+}
+
+export type WorkflowUpdateToOneWithWhereWithoutExecutionsInput = {
+  where?: Prisma.WorkflowWhereInput
+  data: Prisma.XOR<Prisma.WorkflowUpdateWithoutExecutionsInput, Prisma.WorkflowUncheckedUpdateWithoutExecutionsInput>
+}
+
+export type WorkflowUpdateWithoutExecutionsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  workflowSchemas?: Prisma.WorkflowSchemaUpdateManyWithoutWorkflowNestedInput
+}
+
+export type WorkflowUncheckedUpdateWithoutExecutionsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  workflowSchemas?: Prisma.WorkflowSchemaUncheckedUpdateManyWithoutWorkflowNestedInput
 }
 
 

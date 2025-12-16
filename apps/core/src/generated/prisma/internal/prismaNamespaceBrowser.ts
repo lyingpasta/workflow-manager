@@ -52,8 +52,8 @@ export const AnyNull = runtime.AnyNull
 
 export const ModelName = {
   Workflow: 'Workflow',
-  WorkflowExecution: 'WorkflowExecution',
   WorkflowSchema: 'WorkflowSchema',
+  WorkflowExecution: 'WorkflowExecution',
   NodeExecution: 'NodeExecution'
 } as const
 
@@ -84,18 +84,6 @@ export const WorkflowScalarFieldEnum = {
 export type WorkflowScalarFieldEnum = (typeof WorkflowScalarFieldEnum)[keyof typeof WorkflowScalarFieldEnum]
 
 
-export const WorkflowExecutionScalarFieldEnum = {
-  id: 'id',
-  status: 'status',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  workflowId: 'workflowId',
-  workflowSchemaId: 'workflowSchemaId'
-} as const
-
-export type WorkflowExecutionScalarFieldEnum = (typeof WorkflowExecutionScalarFieldEnum)[keyof typeof WorkflowExecutionScalarFieldEnum]
-
-
 export const WorkflowSchemaScalarFieldEnum = {
   id: 'id',
   createdAt: 'createdAt',
@@ -108,12 +96,27 @@ export const WorkflowSchemaScalarFieldEnum = {
 export type WorkflowSchemaScalarFieldEnum = (typeof WorkflowSchemaScalarFieldEnum)[keyof typeof WorkflowSchemaScalarFieldEnum]
 
 
+export const WorkflowExecutionScalarFieldEnum = {
+  id: 'id',
+  status: 'status',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  workflowId: 'workflowId',
+  workflowSchemaId: 'workflowSchemaId'
+} as const
+
+export type WorkflowExecutionScalarFieldEnum = (typeof WorkflowExecutionScalarFieldEnum)[keyof typeof WorkflowExecutionScalarFieldEnum]
+
+
 export const NodeExecutionScalarFieldEnum = {
   id: 'id',
   nodeId: 'nodeId',
+  nextNodeId: 'nextNodeId',
   status: 'status',
   input: 'input',
   output: 'output',
+  isStart: 'isStart',
+  isEnd: 'isEnd',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   workflowExecutionId: 'workflowExecutionId'

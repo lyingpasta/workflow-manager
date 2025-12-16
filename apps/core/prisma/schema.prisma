@@ -19,7 +19,7 @@ model Workflow {
   name      String
   createdAt DateTime  @default(now()) @map("created_at")
   updatedAt DateTime? @updatedAt @map("updated_at")
-  isActive  Boolean   @default(false)
+  isActive  Boolean   @default(false) @map("is_active")
 
   workflowSchemas WorkflowSchema[]
   executions      WorkflowExecution[]
@@ -27,27 +27,12 @@ model Workflow {
   @@map("workflow")
 }
 
-model WorkflowExecution {
-  id        String    @id
-  status    String    @default("started")
-  createdAt DateTime  @default(now()) @map("created_at")
-  updatedAt DateTime? @updatedAt @map("updated_at")
-
-  workflow         Workflow        @relation(fields: [workflowId], references: [id])
-  workflowId       String
-  workflowSchema   WorkflowSchema  @relation(map: "workflow_id", references: [id], fields: [workflowSchemaId])
-  workflowSchemaId String          @map("workflow_schema_id")
-  nodeExections    NodeExecution[]
-
-  @@map("workflow_execution")
-}
-
 model WorkflowSchema {
   id        String    @id
   createdAt DateTime  @default(now()) @map("created_at")
   updatedAt DateTime? @updatedAt @map("updated_at")
   schema    Json
-  isActive  Boolean
+  isActive  Boolean   @map("is_active")
 
   workflowId String   @map("workflow_id")
   workflow   Workflow @relation(fields: [workflowId], references: [id])
@@ -57,14 +42,32 @@ model WorkflowSchema {
   @@map("workflow_schema")
 }
 
-model NodeExecution {
+model WorkflowExecution {
   id        String    @id
-  nodeId    String
   status    String    @default("started")
-  input     Json?
-  output    Json?
   createdAt DateTime  @default(now()) @map("created_at")
   updatedAt DateTime? @updatedAt @map("updated_at")
+
+  workflow         Workflow        @relation(fields: [workflowId], references: [id])
+  workflowId       String          @map("workflow_id")
+  workflowSchema   WorkflowSchema  @relation(map: "workflow_id", references: [id], fields: [workflowSchemaId])
+  workflowSchemaId String          @map("workflow_schema_id")
+  nodeExections    NodeExecution[]
+
+  @@map("workflow_execution")
+}
+
+model NodeExecution {
+  id         String    @id
+  nodeId     String    @map("node_id")
+  nextNodeId String?   @map("next_node_id")
+  status     String    @default("pending")
+  input      Json?
+  output     Json?
+  isStart    Boolean   @map("is_start")
+  isEnd      Boolean   @map("is_end")
+  createdAt  DateTime  @default(now()) @map("created_at")
+  updatedAt  DateTime? @updatedAt @map("updated_at")
 
   workflowExecutionId String
   workflowExecution   WorkflowExecution @relation(fields: [workflowExecutionId], references: [id])

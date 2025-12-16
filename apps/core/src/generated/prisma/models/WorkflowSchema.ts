@@ -315,11 +315,6 @@ export type WorkflowSchemaOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
 }
 
-export type WorkflowSchemaScalarRelationFilter = {
-  is?: Prisma.WorkflowSchemaWhereInput
-  isNot?: Prisma.WorkflowSchemaWhereInput
-}
-
 export type WorkflowSchemaCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -343,6 +338,11 @@ export type WorkflowSchemaMinOrderByAggregateInput = {
   updatedAt?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   workflowId?: Prisma.SortOrder
+}
+
+export type WorkflowSchemaScalarRelationFilter = {
+  is?: Prisma.WorkflowSchemaWhereInput
+  isNot?: Prisma.WorkflowSchemaWhereInput
 }
 
 export type WorkflowSchemaCreateNestedManyWithoutWorkflowInput = {

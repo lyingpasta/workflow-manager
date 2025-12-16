@@ -1,15 +1,15 @@
-import { Controller, Inject, Param, Post } from "@nestjs/common";
-import { StartWorkflowExecutionUseCase } from "src/domain/use-case/start-workflow-execution.use-case";
+import { Controller, Inject, Param, Post } from '@nestjs/common';
+import { CreateWorkflowExecutionUseCase } from 'src/domain/use-case/create-workflow-execution.use-case';
 
-@Controller("executions")
+@Controller('executions')
 export class WorkflowExecutionController {
   constructor(
     @Inject()
-    private readonly startWorkflowExecutionUseCase: StartWorkflowExecutionUseCase
-  ) { }
+    private readonly createWorkflowExecutionUseCase: CreateWorkflowExecutionUseCase,
+  ) {}
 
-  @Post(":id/start")
-  startWorkflow(@Param("id") id: string) {
-    return this.startWorkflowExecutionUseCase.execute({ workflowId: id })
+  @Post(':id/start')
+  startWorkflow(@Param('id') id: string) {
+    return this.createWorkflowExecutionUseCase.execute({ workflowId: id });
   }
 }

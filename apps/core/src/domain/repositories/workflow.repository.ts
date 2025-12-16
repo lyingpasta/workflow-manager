@@ -1,5 +1,7 @@
-import { Workflow } from "../entities/workflow.entity";
+import { Workflow } from '../entities/workflow.entity';
 
 export interface WorkflowRepository {
-  create(data: Omit<Workflow, "id" | "createdAt" | "updatedAt" | "executions">): Promise<Workflow>
+  create(
+    data: Omit<Workflow, 'id' | 'createdAt' | 'updatedAt' | 'executions'>,
+  ): Promise<Workflow>;
 }
