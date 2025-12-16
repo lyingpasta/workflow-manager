@@ -10,7 +10,7 @@ CREATE TABLE "workflow" (
 );
 
 -- CreateTable
-CREATE TABLE "execution" (
+CREATE TABLE "workflow_execution" (
     "id" TEXT NOT NULL,
     "status" TEXT NOT NULL DEFAULT 'started',
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -18,7 +18,7 @@ CREATE TABLE "execution" (
     "workflowId" TEXT NOT NULL,
     "workflow_schema_id" TEXT NOT NULL,
 
-    CONSTRAINT "execution_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "workflow_execution_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -33,14 +33,28 @@ CREATE TABLE "workflow_schema" (
     CONSTRAINT "workflow_schema_pkey" PRIMARY KEY ("id")
 );
 
--- CreateIndex
-CREATE UNIQUE INDEX "workflow_name_key" ON "workflow"("name");
+-- CreateTable
+CREATE TABLE "node_execution" (
+    "id" TEXT NOT NULL,
+    "nodeId" TEXT NOT NULL,
+    "status" TEXT NOT NULL DEFAULT 'started',
+    "input" JSONB,
+    "output" JSONB,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3),
+    "workflowExecutionId" TEXT NOT NULL,
+
+    CONSTRAINT "node_execution_pkey" PRIMARY KEY ("id")
+);
 
 -- AddForeignKey
-ALTER TABLE "execution" ADD CONSTRAINT "execution_workflowId_fkey" FOREIGN KEY ("workflowId") REFERENCES "workflow"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "workflow_execution" ADD CONSTRAINT "workflow_execution_workflowId_fkey" FOREIGN KEY ("workflowId") REFERENCES "workflow"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "execution" ADD CONSTRAINT "workflow_id" FOREIGN KEY ("workflow_schema_id") REFERENCES "workflow_schema"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "workflow_execution" ADD CONSTRAINT "workflow_id" FOREIGN KEY ("workflow_schema_id") REFERENCES "workflow_schema"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "workflow_schema" ADD CONSTRAINT "workflow_schema_workflow_id_fkey" FOREIGN KEY ("workflow_id") REFERENCES "workflow"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "node_execution" ADD CONSTRAINT "node_execution_workflowExecutionId_fkey" FOREIGN KEY ("workflowExecutionId") REFERENCES "workflow_execution"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

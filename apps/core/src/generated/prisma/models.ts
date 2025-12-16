@@ -9,6 +9,7 @@
  * 🟢 You can import this file directly.
  */
 export type * from './models/Workflow.js'
-export type * from './models/Execution.js'
+export type * from './models/WorkflowExecution.js'
 export type * from './models/WorkflowSchema.js'
+export type * from './models/NodeExecution.js'
 export type * from './commonInputTypes.js'

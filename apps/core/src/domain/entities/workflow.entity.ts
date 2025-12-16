@@ -1,10 +1,10 @@
-import { Execution } from "./execution.entity"
+import { WorkflowExecution } from "./workflow-execution.entity"
 
 export type Workflow = {
   id: string,
   name: string,
   isActive: boolean,
-  executions: Execution[],
+  executions: WorkflowExecution[],
   createdAt: Date,
   updatedAt?: Date
 }

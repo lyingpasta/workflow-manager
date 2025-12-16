@@ -52,8 +52,9 @@ export const AnyNull = runtime.AnyNull
 
 export const ModelName = {
   Workflow: 'Workflow',
-  Execution: 'Execution',
-  WorkflowSchema: 'WorkflowSchema'
+  WorkflowExecution: 'WorkflowExecution',
+  WorkflowSchema: 'WorkflowSchema',
+  NodeExecution: 'NodeExecution'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -83,7 +84,7 @@ export const WorkflowScalarFieldEnum = {
 export type WorkflowScalarFieldEnum = (typeof WorkflowScalarFieldEnum)[keyof typeof WorkflowScalarFieldEnum]
 
 
-export const ExecutionScalarFieldEnum = {
+export const WorkflowExecutionScalarFieldEnum = {
   id: 'id',
   status: 'status',
   createdAt: 'createdAt',
@@ -92,7 +93,7 @@ export const ExecutionScalarFieldEnum = {
   workflowSchemaId: 'workflowSchemaId'
 } as const
 
-export type ExecutionScalarFieldEnum = (typeof ExecutionScalarFieldEnum)[keyof typeof ExecutionScalarFieldEnum]
+export type WorkflowExecutionScalarFieldEnum = (typeof WorkflowExecutionScalarFieldEnum)[keyof typeof WorkflowExecutionScalarFieldEnum]
 
 
 export const WorkflowSchemaScalarFieldEnum = {
@@ -105,6 +106,20 @@ export const WorkflowSchemaScalarFieldEnum = {
 } as const
 
 export type WorkflowSchemaScalarFieldEnum = (typeof WorkflowSchemaScalarFieldEnum)[keyof typeof WorkflowSchemaScalarFieldEnum]
+
+
+export const NodeExecutionScalarFieldEnum = {
+  id: 'id',
+  nodeId: 'nodeId',
+  status: 'status',
+  input: 'input',
+  output: 'output',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  workflowExecutionId: 'workflowExecutionId'
+} as const
+
+export type NodeExecutionScalarFieldEnum = (typeof NodeExecutionScalarFieldEnum)[keyof typeof NodeExecutionScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -120,6 +135,14 @@ export const JsonNullValueInput = {
 } as const
 
 export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
+
+
+export const NullableJsonNullValueInput = {
+  DbNull: 'DbNull',
+  JsonNull: 'JsonNull'
+} as const
+
+export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
 
 
 export const QueryMode = {

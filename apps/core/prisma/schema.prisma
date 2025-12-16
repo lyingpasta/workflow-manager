@@ -22,23 +22,24 @@ model Workflow {
   isActive  Boolean   @default(false)
 
   workflowSchemas WorkflowSchema[]
-  executions      Execution[]
+  executions      WorkflowExecution[]
 
   @@map("workflow")
 }
 
-model Execution {
+model WorkflowExecution {
   id        String    @id
   status    String    @default("started")
   createdAt DateTime  @default(now()) @map("created_at")
   updatedAt DateTime? @updatedAt @map("updated_at")
 
-  workflow         Workflow       @relation(fields: [workflowId], references: [id])
+  workflow         Workflow        @relation(fields: [workflowId], references: [id])
   workflowId       String
-  workflowSchema   WorkflowSchema @relation(map: "workflow_id", references: [id], fields: [workflowSchemaId])
-  workflowSchemaId String         @map("workflow_schema_id")
+  workflowSchema   WorkflowSchema  @relation(map: "workflow_id", references: [id], fields: [workflowSchemaId])
+  workflowSchemaId String          @map("workflow_schema_id")
+  nodeExections    NodeExecution[]
 
-  @@map("execution")
+  @@map("workflow_execution")
 }
 
 model WorkflowSchema {
@@ -51,7 +52,22 @@ model WorkflowSchema {
   workflowId String   @map("workflow_id")
   workflow   Workflow @relation(fields: [workflowId], references: [id])
 
-  executions Execution[]
+  executions WorkflowExecution[]
 
   @@map("workflow_schema")
+}
+
+model NodeExecution {
+  id        String    @id
+  nodeId    String
+  status    String    @default("started")
+  input     Json?
+  output    Json?
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime? @updatedAt @map("updated_at")
+
+  workflowExecutionId String
+  workflowExecution   WorkflowExecution @relation(fields: [workflowExecutionId], references: [id])
+
+  @@map("node_execution")
 }
