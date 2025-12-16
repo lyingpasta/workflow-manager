@@ -7,10 +7,11 @@
 		"dev": "turbo dev",
 		"build": "turbo build",
 		"preview": "turbo preview",
-		"format": "turbo lint:format"
+		"format": "turbo lint:format",
+		"nuke": "turbo nuke && rm -rf node_modules"
 	},
 	"devDependencies": {
 		"turbo": "^2.6.3"
 	},
-	"packageManager": "pnpm@10.0.0"
+	"packageManager": "pnpm@10.26.0"
 }

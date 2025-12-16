@@ -8,6 +8,6 @@
  *
  * 🟢 You can import this file directly.
  */
-export type * from './models/Workflow.ts'
-export type * from './models/Execution.ts'
-export type * from './commonInputTypes.ts'
+export type * from './models/Workflow.js'
+export type * from './models/Execution.js'
+export type * from './commonInputTypes.js'

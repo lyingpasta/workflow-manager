@@ -1,5 +1,8 @@
 {
   "$schema": "https://turborepo.com/schema.json",
+  "globalEnv": [
+    "DATABASE_URL"
+  ],
   "tasks": {
     "build": {
       "outputs": [
@@ -14,6 +17,12 @@
     "dev": {
       "persistent": true,
       "cache": false
+    },
+    "nuke": {
+      "cache": false,
+      "dependsOn": [
+        "^nuke"
+      ]
     }
   }
 }
