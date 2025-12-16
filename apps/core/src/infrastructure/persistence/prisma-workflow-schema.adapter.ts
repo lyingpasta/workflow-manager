@@ -22,13 +22,24 @@ export class PrismaWorkflowSchemaAdapter implements WorkflowSchemaRepository {
   ) { }
 
   async create(data: Omit<WorkflowSchema, "id" | "createdAt">): Promise<WorkflowSchema> {
-    console.log(data)
     const prisma = await this.prismaService.workflowSchema.create({
       data: {
         ...data,
         schema: data.schema,
         id: randomUUID()
       }
+    });
+    return fromPrismaToDomain(prisma);
+  }
+
+  async getByActiveWorkflowId(workflowId: string): Promise<WorkflowSchema> {
+    const prisma = await this.prismaService.workflowSchema.findFirstOrThrow({
+      where: {
+        workflow: {
+          id: workflowId,
+          isActive: true
+        }
+      },
     });
     return fromPrismaToDomain(prisma);
   }

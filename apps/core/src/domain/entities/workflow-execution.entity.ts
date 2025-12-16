@@ -1,6 +1,6 @@
 import { WorkflowSchema } from "./workflow-schema.entity"
 
-export type ExecutionStatus = "started" | "ongoing" | "succeeded" | "failed"
+export type ExecutionStatus = "created" | "started" | "ongoing" | "succeeded" | "failed"
 
 export type WorkflowExecution = {
   id: string,

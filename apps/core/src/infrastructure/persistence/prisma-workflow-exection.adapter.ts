@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, Provider } from "@nestjs/common";
 import { PrismaService } from "./prisma.service";
 import { WorkflowExecutionRepository } from "src/domain/repositories/workflow-execution.repository";
 import { ExecutionStatus, WorkflowExecution } from "src/domain/entities/workflow-execution.entity";
@@ -8,7 +8,9 @@ import { match, P } from "ts-pattern";
 
 const fromPrismaToDomain = (prisma: PersistedWorkflowExecution): Omit<WorkflowExecution, "workflowSchema"> => ({
   id: prisma.id,
-  status: match(prisma).with({ status: P.union("started", "ongoing", "succeeded", "failed").select() }, (status) => status as ExecutionStatus).otherwise((dbValue) => { throw new Error(`Unknown excution status ${dbValue.status}`) }),
+  status: match(prisma).with({
+    status: P.union("created", "started", "ongoing", "succeeded", "failed").select()
+  }, (status) => status as ExecutionStatus).otherwise((dbValue) => { throw new Error(`Unknown excution status ${dbValue.status}`) }),
   createdAt: prisma.createdAt,
   updatedAt: prisma.updatedAt ?? undefined
 })
@@ -23,4 +25,10 @@ export class PrismaWorkflowExecutionAdapter implements WorkflowExecutionReposito
     });
     return fromPrismaToDomain(prisma);
   }
+}
+
+export const WorkflowExecutionRepositoryToken = Symbol("WorkflowExecutionRepository")
+export const WorkflowExecutionRepositoryProvider: Provider = {
+  provide: WorkflowExecutionRepositoryToken,
+  useClass: PrismaWorkflowExecutionAdapter
 }

@@ -25,7 +25,7 @@ describe('AppController (e2e)', () => {
     await prismaService.workflow.deleteMany()
   })
 
-  it('create new workflow', async () => {
+  it('should create new workflow with its schema', async () => {
     await request(app.getHttpServer())
       .post('/workflow')
       .send({
@@ -41,7 +41,7 @@ describe('AppController (e2e)', () => {
       .expect(201)
 
     const maybeWorkflow = await prismaService.workflow.findMany()
-    expect(maybeWorkflow).not.toHaveLength(1)
+    expect(maybeWorkflow).not.toHaveLength(0)
     expect(maybeWorkflow).toMatchObject(
       expect.arrayContaining([
         expect.objectContaining({
