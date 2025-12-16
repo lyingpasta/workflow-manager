@@ -1,9 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
-import { App } from 'supertest/types.js';
-import { AppModule } from './../src/app.module.js';
-import { PrismaService } from 'src/infrastructure/persistence/prisma.service.js';
+import { App } from 'supertest/types';
+import { AppModule } from 'src/app.module';
+import { PrismaService } from 'src/infrastructure/persistence/prisma.service';
 
 describe('AppController (e2e)', () => {
   let app: INestApplication<App>;
@@ -20,6 +20,11 @@ describe('AppController (e2e)', () => {
     await app.init();
   });
 
+  afterAll(async () => {
+    await prismaService.workflowSchema.deleteMany()
+    await prismaService.workflow.deleteMany()
+  })
+
   it('create new workflow', async () => {
     await request(app.getHttpServer())
       .post('/workflow')
@@ -33,7 +38,7 @@ describe('AppController (e2e)', () => {
           isActive: true,
         }
       })
-      .expect(200)
+      .expect(201)
 
     const maybeWorkflow = await prismaService.workflow.findMany()
     expect(maybeWorkflow).not.toHaveLength(1)

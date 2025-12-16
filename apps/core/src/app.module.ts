@@ -1,10 +1,11 @@
 import { Module } from '@nestjs/common';
-import { InfrastructureModule } from './infrastructure/infrastructure.module.js';
-import { DomainModule } from './domain/domain.module.js';
-import { WorkflowController } from './infrastructure/controllers/workflow.controller.js';
+import { InfrastructureModule } from './infrastructure/infrastructure.module';
+import { DomainModule } from './domain/domain.module';
+import { WorkflowController } from './infrastructure/controllers/workflow.controller';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
-  imports: [InfrastructureModule, DomainModule],
+  imports: [InfrastructureModule, DomainModule, ConfigModule.forRoot({ isGlobal: true })],
   controllers: [WorkflowController],
   providers: [],
 })

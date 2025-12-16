@@ -1,10 +1,10 @@
-import { Inject } from "@nestjs/common";
-import { WorkflowSchemaRepositoryToken } from "src/infrastructure/persistence/prisma-workflow-schema.adapter.js";
-import { type WorkflowRepository } from "../repositories/workflow.repository.js";
-import { WorkflowRepositoryToken } from "src/infrastructure/persistence/prisma-workflow.adapter.js";
-import { type WorkflowSchemaRepository } from "../repositories/workflow-schema.repository.js";
-import { Workflow } from "../entities/workflow.entity.js";
-import { WorkflowSchema } from "../entities/workflow-schema.entity.js";
+import { Inject, Injectable } from "@nestjs/common";
+import { WorkflowSchemaRepositoryToken } from "src/infrastructure/persistence/prisma-workflow-schema.adapter";
+import { type WorkflowRepository } from "../repositories/workflow.repository";
+import { WorkflowRepositoryToken } from "src/infrastructure/persistence/prisma-workflow.adapter";
+import { type WorkflowSchemaRepository } from "../repositories/workflow-schema.repository";
+import { Workflow } from "../entities/workflow.entity";
+import { WorkflowSchema } from "../entities/workflow-schema.entity";
 
 type CreateWorkflowUseCasePort = {
   workflow: Omit<Workflow, "id" | "createdAt" | "schema" | "executions">,
@@ -16,6 +16,7 @@ type CreateWorkflowUseCaseResult = {
   schema: WorkflowSchema
 }
 
+@Injectable()
 export class CreateWorkflowUseCase {
   constructor(
     @Inject(WorkflowRepositoryToken)

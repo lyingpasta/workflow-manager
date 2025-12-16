@@ -1,4 +1,4 @@
-import { Execution } from "./execution.entity.js"
+import { Execution } from "./execution.entity"
 
 export type Workflow = {
   id: string,

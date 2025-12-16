@@ -1,9 +1,9 @@
-import { Injectable, Provider } from "@nestjs/common";
-import { PrismaService } from "./prisma.service.js";
-import { Workflow } from "src/domain/entities/workflow.entity.js";
+import { Inject, Injectable, Provider } from "@nestjs/common";
+import { PrismaService } from "./prisma.service";
+import { Workflow } from "src/domain/entities/workflow.entity";
 import { randomUUID } from "node:crypto";
-import { Workflow as PersistedWorkflow } from "../generated/prisma/client.js";
-import { WorkflowRepository } from "src/domain/repositories/workflow.repository.js";
+import { Workflow as PersistedWorkflow } from "$prisma/client";
+import { WorkflowRepository } from "src/domain/repositories/workflow.repository";
 
 const fromPrismaToDomain = (prisma: PersistedWorkflow): Workflow => ({
   id: prisma.id,
@@ -16,7 +16,10 @@ const fromPrismaToDomain = (prisma: PersistedWorkflow): Workflow => ({
 
 @Injectable()
 export class PrismaWorkflowAdapter implements WorkflowRepository {
-  constructor(private prismaService: PrismaService) { }
+  constructor(
+    @Inject()
+    private readonly prismaService: PrismaService
+  ) { }
 
   async create(workflow: Omit<Workflow, "id" | "createdAt" | "updatedAt" | "executions">): Promise<Workflow> {
     const prisma = await this.prismaService.workflow.create({
@@ -29,8 +32,8 @@ export class PrismaWorkflowAdapter implements WorkflowRepository {
   }
 }
 
-export const WorkflowRepositoryToken = "WorkflowRepository"
+export const WorkflowRepositoryToken = Symbol("WorkflowRepository")
 export const WorkflowRepositoryProvider: Provider = {
-  provide: Symbol(WorkflowRepositoryToken),
+  provide: WorkflowRepositoryToken,
   useClass: PrismaWorkflowAdapter
 }

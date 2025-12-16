@@ -1,4 +1,4 @@
-import { WorkflowSchema } from "./workflow-schema.entity.js"
+import { WorkflowSchema } from "./workflow-schema.entity"
 
 export type ExecutionStatus = "started" | "ongoing" | "succeeded" | "failed"
 

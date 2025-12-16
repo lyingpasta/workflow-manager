@@ -1,7 +1,10 @@
 import { Module } from "@nestjs/common";
-import { InfrastructureModule } from "src/infrastructure/infrastructure.module.js";
+import { InfrastructureModule } from "src/infrastructure/infrastructure.module";
+import { CreateWorkflowUseCase } from "./use-case/create-workflow.use-case";
 
 @Module({
-  imports: [InfrastructureModule]
+  providers: [CreateWorkflowUseCase],
+  imports: [InfrastructureModule],
+  exports: [CreateWorkflowUseCase]
 })
 export class DomainModule { }

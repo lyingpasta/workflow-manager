@@ -20,7 +20,7 @@ const config: runtime.GetPrismaClientConfig = {
   "clientVersion": "7.1.0",
   "engineVersion": "ab635e6b9d606fa5c8fb8b1a7f909c3c3c1c98ba",
   "activeProvider": "postgresql",
-  "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\n// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?\n// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init\n\ngenerator client {\n  provider = \"prisma-client\"\n  output   = \"../src/infrastructure/generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n}\n\nmodel Workflow {\n  id        String    @id\n  name      String    @unique\n  createdAt DateTime  @default(now()) @map(\"created_at\")\n  updatedAt DateTime? @updatedAt @map(\"updated_at\")\n  isActive  Boolean   @default(false)\n\n  workflowSchemas WorkflowSchema[]\n  executions      Execution[]\n\n  @@map(\"workflow\")\n}\n\nmodel Execution {\n  id        String    @id\n  status    String    @default(\"started\")\n  createdAt DateTime  @default(now()) @map(\"created_at\")\n  updatedAt DateTime? @updatedAt @map(\"updated_at\")\n\n  workflow         Workflow       @relation(fields: [workflowId], references: [id])\n  workflowId       String\n  workflowSchema   WorkflowSchema @relation(map: \"workflow_id\", references: [id], fields: [workflowSchemaId])\n  workflowSchemaId String         @map(\"workflow_schema_id\")\n\n  @@map(\"execution\")\n}\n\nmodel WorkflowSchema {\n  id        String    @id\n  createdAt DateTime  @default(now()) @map(\"created_at\")\n  updatedAt DateTime? @updatedAt @map(\"updated_at\")\n  schema    Json\n  isActive  Boolean\n\n  workflowId String   @map(\"workflow_id\")\n  workflow   Workflow @relation(fields: [workflowId], references: [id])\n\n  executions Execution[]\n\n  @@map(\"workflow_schema\")\n}\n",
+  "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\n// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?\n// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init\n\ngenerator client {\n  provider     = \"prisma-client\"\n  output       = \"../src/generated/prisma\"\n  moduleFormat = \"cjs\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n}\n\nmodel Workflow {\n  id        String    @id\n  name      String    @unique\n  createdAt DateTime  @default(now()) @map(\"created_at\")\n  updatedAt DateTime? @updatedAt @map(\"updated_at\")\n  isActive  Boolean   @default(false)\n\n  workflowSchemas WorkflowSchema[]\n  executions      Execution[]\n\n  @@map(\"workflow\")\n}\n\nmodel Execution {\n  id        String    @id\n  status    String    @default(\"started\")\n  createdAt DateTime  @default(now()) @map(\"created_at\")\n  updatedAt DateTime? @updatedAt @map(\"updated_at\")\n\n  workflow         Workflow       @relation(fields: [workflowId], references: [id])\n  workflowId       String\n  workflowSchema   WorkflowSchema @relation(map: \"workflow_id\", references: [id], fields: [workflowSchemaId])\n  workflowSchemaId String         @map(\"workflow_schema_id\")\n\n  @@map(\"execution\")\n}\n\nmodel WorkflowSchema {\n  id        String    @id\n  createdAt DateTime  @default(now()) @map(\"created_at\")\n  updatedAt DateTime? @updatedAt @map(\"updated_at\")\n  schema    Json\n  isActive  Boolean\n\n  workflowId String   @map(\"workflow_id\")\n  workflow   Workflow @relation(fields: [workflowId], references: [id])\n\n  executions Execution[]\n\n  @@map(\"workflow_schema\")\n}\n",
   "runtimeDataModel": {
     "models": {},
     "enums": {},
@@ -37,10 +37,10 @@ async function decodeBase64AsWasm(wasmBase64: string): Promise<WebAssembly.Modul
 }
 
 config.compilerWasm = {
-  getRuntime: async () => await import("@prisma/client/runtime/query_compiler_bg.postgresql.mjs"),
+  getRuntime: async () => await import("@prisma/client/runtime/query_compiler_bg.postgresql.js"),
 
   getQueryCompilerWasmModule: async () => {
-    const { wasm } = await import("@prisma/client/runtime/query_compiler_bg.postgresql.wasm-base64.mjs")
+    const { wasm } = await import("@prisma/client/runtime/query_compiler_bg.postgresql.wasm-base64.js")
     return await decodeBase64AsWasm(wasm)
   }
 }

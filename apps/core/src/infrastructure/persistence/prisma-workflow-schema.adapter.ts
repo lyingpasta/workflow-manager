@@ -1,9 +1,9 @@
-import { Injectable, Provider } from "@nestjs/common";
-import { PrismaService } from "./prisma.service.js";
-import { WorkflowSchema } from "src/domain/entities/workflow-schema.entity.js";
-import { WorkflowSchema as PersistedWorkflowSchema } from "../generated/prisma/client.js";
+import { Inject, Injectable, Provider } from "@nestjs/common";
+import { PrismaService } from "./prisma.service";
+import { WorkflowSchema } from "src/domain/entities/workflow-schema.entity";
+import { WorkflowSchema as PersistedWorkflowSchema } from "$prisma/client";
 import { randomUUID } from "node:crypto";
-import { WorkflowSchemaRepository } from "src/domain/repositories/workflow-schema.repository.js";
+import { WorkflowSchemaRepository } from "src/domain/repositories/workflow-schema.repository";
 
 const fromPrismaToDomain = (prisma: PersistedWorkflowSchema): WorkflowSchema => ({
   id: prisma.id,
@@ -16,13 +16,17 @@ const fromPrismaToDomain = (prisma: PersistedWorkflowSchema): WorkflowSchema => 
 
 @Injectable()
 export class PrismaWorkflowSchemaAdapter implements WorkflowSchemaRepository {
-  constructor(private prismaService: PrismaService) { }
+  constructor(
+    @Inject()
+    private readonly prismaService: PrismaService
+  ) { }
 
   async create(data: Omit<WorkflowSchema, "id" | "createdAt">): Promise<WorkflowSchema> {
+    console.log(data)
     const prisma = await this.prismaService.workflowSchema.create({
       data: {
         ...data,
-        schema: JSON.parse(data.schema ?? "{}"),
+        schema: data.schema,
         id: randomUUID()
       }
     });
