@@ -14,22 +14,43 @@ datasource db {
 }
 
 model Workflow {
-  id         String      @id
-  name       String      @unique
-  executions Execution[]
-  createdAt  DateTime    @default(now()) @map("created_at")
-  updatedAt  DateTime?   @updatedAt @map("updated_at")
+  id        String    @id
+  name      String    @unique
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime? @updatedAt @map("updated_at")
+  isActive  Boolean   @default(false)
+
+  workflowSchemas WorkflowSchema[]
+  executions      Execution[]
 
   @@map("workflow")
 }
 
 model Execution {
-  id         String    @id
-  workflow   Workflow  @relation(map: "workflow_id", references: [id], fields: [workflowId])
-  workflowId String    @map("workflow_id")
-  status     String    @default("started")
-  createdAt  DateTime  @default(now()) @map("created_at")
-  updatedAt  DateTime? @updatedAt @map("updated_at")
+  id        String    @id
+  status    String    @default("started")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime? @updatedAt @map("updated_at")
+
+  workflow         Workflow       @relation(fields: [workflowId], references: [id])
+  workflowId       String
+  workflowSchema   WorkflowSchema @relation(map: "workflow_id", references: [id], fields: [workflowSchemaId])
+  workflowSchemaId String         @map("workflow_schema_id")
 
   @@map("execution")
+}
+
+model WorkflowSchema {
+  id        String    @id
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime? @updatedAt @map("updated_at")
+  schema    Json
+  isActive  Boolean
+
+  workflowId String   @map("workflow_id")
+  workflow   Workflow @relation(fields: [workflowId], references: [id])
+
+  executions Execution[]
+
+  @@map("workflow_schema")
 }

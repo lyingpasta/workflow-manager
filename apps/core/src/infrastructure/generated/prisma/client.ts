@@ -49,3 +49,8 @@ export type Workflow = Prisma.WorkflowModel
  * 
  */
 export type Execution = Prisma.ExecutionModel
+/**
+ * Model WorkflowSchema
+ * 
+ */
+export type WorkflowSchema = Prisma.WorkflowSchemaModel

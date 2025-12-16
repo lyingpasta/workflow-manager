@@ -10,4 +10,5 @@
  */
 export type * from './models/Workflow.js'
 export type * from './models/Execution.js'
+export type * from './models/WorkflowSchema.js'
 export type * from './commonInputTypes.js'

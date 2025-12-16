@@ -385,7 +385,8 @@ type FieldRefInputType<Model, FieldType> = Model extends never ? never : FieldRe
 
 export const ModelName = {
   Workflow: 'Workflow',
-  Execution: 'Execution'
+  Execution: 'Execution',
+  WorkflowSchema: 'WorkflowSchema'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -401,7 +402,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "workflow" | "execution"
+    modelProps: "workflow" | "execution" | "workflowSchema"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -553,6 +554,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    WorkflowSchema: {
+      payload: Prisma.$WorkflowSchemaPayload<ExtArgs>
+      fields: Prisma.WorkflowSchemaFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.WorkflowSchemaFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WorkflowSchemaPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.WorkflowSchemaFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WorkflowSchemaPayload>
+        }
+        findFirst: {
+          args: Prisma.WorkflowSchemaFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WorkflowSchemaPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.WorkflowSchemaFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WorkflowSchemaPayload>
+        }
+        findMany: {
+          args: Prisma.WorkflowSchemaFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WorkflowSchemaPayload>[]
+        }
+        create: {
+          args: Prisma.WorkflowSchemaCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WorkflowSchemaPayload>
+        }
+        createMany: {
+          args: Prisma.WorkflowSchemaCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.WorkflowSchemaCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WorkflowSchemaPayload>[]
+        }
+        delete: {
+          args: Prisma.WorkflowSchemaDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WorkflowSchemaPayload>
+        }
+        update: {
+          args: Prisma.WorkflowSchemaUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WorkflowSchemaPayload>
+        }
+        deleteMany: {
+          args: Prisma.WorkflowSchemaDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.WorkflowSchemaUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.WorkflowSchemaUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WorkflowSchemaPayload>[]
+        }
+        upsert: {
+          args: Prisma.WorkflowSchemaUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WorkflowSchemaPayload>
+        }
+        aggregate: {
+          args: Prisma.WorkflowSchemaAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateWorkflowSchema>
+        }
+        groupBy: {
+          args: Prisma.WorkflowSchemaGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.WorkflowSchemaGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.WorkflowSchemaCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.WorkflowSchemaCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -596,7 +671,8 @@ export const WorkflowScalarFieldEnum = {
   id: 'id',
   name: 'name',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  isActive: 'isActive'
 } as const
 
 export type WorkflowScalarFieldEnum = (typeof WorkflowScalarFieldEnum)[keyof typeof WorkflowScalarFieldEnum]
@@ -604,13 +680,26 @@ export type WorkflowScalarFieldEnum = (typeof WorkflowScalarFieldEnum)[keyof typ
 
 export const ExecutionScalarFieldEnum = {
   id: 'id',
-  workflowId: 'workflowId',
   status: 'status',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  workflowId: 'workflowId',
+  workflowSchemaId: 'workflowSchemaId'
 } as const
 
 export type ExecutionScalarFieldEnum = (typeof ExecutionScalarFieldEnum)[keyof typeof ExecutionScalarFieldEnum]
+
+
+export const WorkflowSchemaScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  schema: 'schema',
+  isActive: 'isActive',
+  workflowId: 'workflowId'
+} as const
+
+export type WorkflowSchemaScalarFieldEnum = (typeof WorkflowSchemaScalarFieldEnum)[keyof typeof WorkflowSchemaScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -619,6 +708,13 @@ export const SortOrder = {
 } as const
 
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
+
+
+export const JsonNullValueInput = {
+  JsonNull: JsonNull
+} as const
+
+export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
 
 
 export const QueryMode = {
@@ -635,6 +731,15 @@ export const NullsOrder = {
 } as const
 
 export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
+
+
+export const JsonNullValueFilter = {
+  DbNull: DbNull,
+  JsonNull: JsonNull,
+  AnyNull: AnyNull
+} as const
+
+export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
 
 
 
@@ -668,6 +773,27 @@ export type DateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel
  * Reference to a field of type 'DateTime[]'
  */
 export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime[]'>
+    
+
+
+/**
+ * Reference to a field of type 'Boolean'
+ */
+export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
+    
+
+
+/**
+ * Reference to a field of type 'Json'
+ */
+export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
+    
+
+
+/**
+ * Reference to a field of type 'QueryMode'
+ */
+export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QueryMode'>
     
 
 
@@ -781,6 +907,7 @@ export type PrismaClientOptions = ({
 export type GlobalOmitConfig = {
   workflow?: Prisma.WorkflowOmit
   execution?: Prisma.ExecutionOmit
+  workflowSchema?: Prisma.WorkflowSchemaOmit
 }
 
 /* Types for Logging */

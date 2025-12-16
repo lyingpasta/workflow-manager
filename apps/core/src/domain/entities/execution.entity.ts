@@ -1,14 +1,13 @@
-import { Workflow } from "./workflow.entity"
+import { WorkflowSchema } from "./workflow-schema.entity.js"
 
 export type ExecutionStatus = "started" | "ongoing" | "succeeded" | "failed"
 
 export type Execution = {
   id: string,
-  workflow: Workflow,
+  workflowSchema: WorkflowSchema,
   status: ExecutionStatus
   createdAt: Date,
   updatedAt?: Date
-
 }
 
 
