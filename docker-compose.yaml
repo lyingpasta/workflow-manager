@@ -1,6 +1,6 @@
 services:
   postgres: 
-    image: postgres/postgres@latest 
+    image: postgres:17
     environment:
       TZ: 'Japan'
       PGTZ: 'Japan'
