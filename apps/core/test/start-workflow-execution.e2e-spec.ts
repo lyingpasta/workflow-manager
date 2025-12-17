@@ -37,9 +37,10 @@ describe('Create Workflow Execution', () => {
   });
 
   afterAll(async () => {
-    // await prismaService.workflowExecution.deleteMany();
-    // await prismaService.workflowSchema.deleteMany();
-    // await prismaService.workflow.deleteMany();
+    await prismaService.nodeExecution.deleteMany();
+    await prismaService.workflowExecution.deleteMany();
+    await prismaService.workflowSchema.deleteMany();
+    await prismaService.workflow.deleteMany();
   });
 
   describe('when execution already exists ', () => {
