@@ -21,7 +21,7 @@ export class PrismaWorkflowSchemaAdapter implements WorkflowSchemaRepository {
   constructor(
     @Inject()
     private readonly prismaService: PrismaService,
-  ) { }
+  ) {}
 
   async create(
     data: Omit<WorkflowSchema, 'id' | 'createdAt'>,

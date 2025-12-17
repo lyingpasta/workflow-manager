@@ -9,17 +9,25 @@ import { match, P } from 'ts-pattern';
 export class WorkflowExecutionEventConsumer extends WorkerHost {
   constructor(
     @Inject(forwardRef(() => StartWorkflowExecutionUseCase))
-    private readonly startWorkflowExecutionUseCase: StartWorkflowExecutionUseCase
+    private readonly startWorkflowExecutionUseCase: StartWorkflowExecutionUseCase,
   ) {
     super();
   }
 
   async process(job: Job): Promise<void> {
-    return match(job).with({
-      name: "start",
-      data: { workflowExecutionId: P.string.select() }
-    }, (workflowExecutionId) => this.startWorkflowExecutionUseCase.execute({ workflowExecutionId })).otherwise(() => {
-      console.warn(`Corrupted event received ${{ name: job.name, data: job.data }}`)
-    })
+    return match(job)
+      .with(
+        {
+          name: 'start',
+          data: { workflowExecutionId: P.string.select() },
+        },
+        (workflowExecutionId) =>
+          this.startWorkflowExecutionUseCase.execute({ workflowExecutionId }),
+      )
+      .otherwise(() => {
+        console.warn(
+          `Corrupted event received ${JSON.stringify({ name: job.name, data: job.data })}`,
+        );
+      });
   }
 }

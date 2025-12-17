@@ -13,12 +13,15 @@ import { WorkflowExecutionEventConsumer } from './bull/consumers/workflow-execut
 import { NodeExecutionRepositoryProvider } from './persistence/prisma-node-exection.adapter';
 import { NodeExecutionEventProducer } from './bull/producers/node-execution.producer';
 import { DomainModule } from 'src/domain/domain.module';
+import { NodeExecutionEventConsumer } from './bull/consumers/node-execution.consumer';
 
 @Module({
   imports: [
-    BullModule.registerQueue({ name: WORKFLOW_EXECUTION_QUEUE }),
-    BullModule.registerQueue({ name: NODE_EXECUTION_QUEUE }),
-    forwardRef(() => DomainModule)
+    BullModule.registerQueue(
+      { name: NODE_EXECUTION_QUEUE },
+      { name: WORKFLOW_EXECUTION_QUEUE },
+    ),
+    forwardRef(() => DomainModule),
   ],
   providers: [
     WorkflowRepositoryProvider,
@@ -28,6 +31,7 @@ import { DomainModule } from 'src/domain/domain.module';
     WorkflowExecutionEventProducer,
     WorkflowExecutionEventConsumer,
     NodeExecutionEventProducer,
+    NodeExecutionEventConsumer,
     NodeExecutionRepositoryProvider,
   ],
   exports: [
@@ -39,4 +43,4 @@ import { DomainModule } from 'src/domain/domain.module';
     NodeExecutionRepositoryProvider,
   ],
 })
-export class InfrastructureModule { }
+export class InfrastructureModule {}

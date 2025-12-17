@@ -1,4 +1,4 @@
-import { BullModule, InjectQueue } from '@nestjs/bullmq';
+import { InjectQueue } from '@nestjs/bullmq';
 import { Injectable } from '@nestjs/common';
 import { Job, Queue } from 'bullmq';
 import { WORKFLOW_EXECUTION_QUEUE } from 'src/value-objects/bullmq';

@@ -10,17 +10,19 @@ import { WorkflowExecutionEventProducer } from 'src/infrastructure/bull/producer
 describe('Create Workflow Execution', () => {
   let app: INestApplication<App>;
   let prismaService: PrismaService;
-  let workflowExecutionEventProducer: WorkflowExecutionEventProducer
+  let workflowExecutionEventProducer: WorkflowExecutionEventProducer;
   let workflowId: string;
   let workflowSchemaId: string;
-  let producerSpy: jest.SpyInstance
+  let producerSpy: jest.SpyInstance;
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();
 
-    workflowExecutionEventProducer = moduleFixture.get(WorkflowExecutionEventProducer)
+    workflowExecutionEventProducer = moduleFixture.get(
+      WorkflowExecutionEventProducer,
+    );
     prismaService = moduleFixture.get(PrismaService);
     app = moduleFixture.createNestApplication();
 
@@ -28,7 +30,9 @@ describe('Create Workflow Execution', () => {
 
     workflowId = randomUUID();
     workflowSchemaId = randomUUID();
-    producerSpy = jest.spyOn(workflowExecutionEventProducer, "produceStartEvent").mockImplementation()
+    producerSpy = jest
+      .spyOn(workflowExecutionEventProducer, 'produceStartEvent')
+      .mockImplementation();
   });
 
   afterAll(async () => {
@@ -73,7 +77,11 @@ describe('Create Workflow Execution', () => {
             workflowId: workflow.id,
           },
         });
-      const workflowExecution = maybeWorkflowExecution.find(wfe => wfe.workflowId === workflow.id && wfe.workflowSchemaId === workflowSchema.id)
+      const workflowExecution = maybeWorkflowExecution.find(
+        (wfe) =>
+          wfe.workflowId === workflow.id &&
+          wfe.workflowSchemaId === workflowSchema.id,
+      );
       expect(workflowExecution).toBeDefined();
       expect(workflowExecution).toMatchObject(
         expect.objectContaining({
@@ -84,7 +92,7 @@ describe('Create Workflow Execution', () => {
       );
       expect(producerSpy).toHaveBeenCalledWith({
         workflowExecutionId: workflowExecution!.id,
-      })
+      });
     });
   });
 });

@@ -10,6 +10,7 @@ import {
 import { NodeExecutionRepositoryToken } from 'src/infrastructure/persistence/prisma-node-exection.adapter';
 import { type NodeExecutionRepository } from '../repositories/node-execution.repository';
 import { NodeExecutionEventProducer } from 'src/infrastructure/bull/producers/node-execution.producer';
+import { WorkflowService } from '../services/workflow.service';
 
 type StartWorkflowExecutionUseCasePort = {
   workflowExecutionId: string;
@@ -23,8 +24,10 @@ export class StartWorkflowExecutionUseCase {
     @Inject(NodeExecutionRepositoryToken)
     private readonly nodeExecutionRepository: NodeExecutionRepository,
     @Inject(forwardRef(() => NodeExecutionEventProducer))
-    private readonly nodeExecutionEventProducer: NodeExecutionEventProducer
-  ) { }
+    private readonly nodeExecutionEventProducer: NodeExecutionEventProducer,
+    @Inject()
+    private workflowService: WorkflowService,
+  ) {}
 
   async execute(port: StartWorkflowExecutionUseCasePort): Promise<void> {
     const workflowExecution =
@@ -42,62 +45,32 @@ export class StartWorkflowExecutionUseCase {
   }
 
   private async startExecution(workflowExecution: WorkflowExecution) {
-    const nodes = this.prepareWorkflowExecutionData(workflowExecution);
+    const nodes =
+      this.workflowService.getWorkflowExecutionBlueprint(workflowExecution);
     if (!nodes) {
       return;
     }
 
-    const nodesArray = [...nodes.values()]
+    const nodesArray = [...nodes.values()];
     return match(nodesArray.find((node) => node.isStart === true))
       .with(P.nonNullable, async (starterNode) => {
-        const execution = await this.nodeExecutionRepository.create({
-          status: "pending",
+        const nodeExecution = await this.nodeExecutionRepository.create({
+          status: 'pending',
           nodeId: starterNode.id,
           nextNodeId: starterNode.nextNodeId,
           workflowExecutionId: workflowExecution.id,
           isStart: starterNode.isStart,
-          isEnd: starterNode.isEnd
-        })
+          isEnd: starterNode.isEnd,
+        });
 
-        return this.nodeExecutionEventProducer.produceStartEvent(execution)
+        return this.nodeExecutionEventProducer.produceStartEvent({
+          nodeExecution,
+        });
       })
-      .otherwise(() => {
-        throw new Error(`No starter node for execution ${workflowExecution.id}`)
-      })
-  }
-
-  private prepareWorkflowExecutionData(workflowExecution: WorkflowExecution) {
-    return match(workflowExecution.workflowSchema.schema)
-      .with({ nodes: P.array(P.any), flows: P.array(P.any) }, (schema) =>
-        this.buildNodesTreeMap(schema),
-      )
       .otherwise(() => {
         throw new Error(
-          `Corrupted schema! id: ${workflowExecution.workflowSchema.id}`,
+          `No starter node for execution ${workflowExecution.id}`,
         );
       });
-  }
-
-  private buildNodesTreeMap(schema: { nodes: any[]; flows: any[] }) {
-    const nodesMap: Map<string, WorkflowNode> = new Map()
-    schema.nodes.map((node) => nodesMap.set(node.id, convertToWorkflowNode(node)));
-
-    for (let maybeFlowArrow of schema.flows as any[]) {
-      match(maybeFlowArrow)
-        .with({ from: P.string, to: P.string }, (arrowFlow) => {
-          const node = nodesMap.get(arrowFlow.from);
-          const nextNode = nodesMap.get(arrowFlow.to);
-          if (node && nextNode && !node.nextNodeId) {
-            node.nextNodeId = nextNode.id;
-            nodesMap.set(node.id, node);
-          } else {
-            console.error(`Unattached arrow destination, ignoring...`);
-          }
-        })
-        .otherwise(() => {
-          throw new Error('Corrupted arrow data');
-        });
-    }
-    return nodesMap;
   }
 }

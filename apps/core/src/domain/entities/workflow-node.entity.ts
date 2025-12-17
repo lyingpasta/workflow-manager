@@ -1,7 +1,7 @@
 import { match, P } from 'ts-pattern';
 
 type ExtractSource = 'job' | 'node';
-type ExtractNode = {
+export type ExtractNode = {
   type: 'extract';
   source: ExtractSource;
   paths: {
@@ -11,19 +11,19 @@ type ExtractNode = {
 };
 
 type TransformOperation = 'add' | 'substract' | 'append' | 'concat';
-type TransformNode = {
+export type TransformNode = {
   type: 'transform';
   operation: TransformOperation;
   paths: string[];
 };
 
-type LoadNode = {
+export type LoadNode = {
   type: 'load';
   path: string;
 };
 
 type ControlOperation = 'condition' | 'switch' | 'merge' | 'split' | 'loop';
-type ControlNode = {
+export type ControlNode = {
   type: 'control';
   operation: ControlOperation;
 };
@@ -33,7 +33,7 @@ export type WorkflowNode = (
   | TransformNode
   | LoadNode
   | ControlNode
-) & { id: string; nextNodeId?: string, isStart: boolean, isEnd: boolean };
+) & { id: string; nextNodeId?: string; isStart: boolean; isEnd: boolean };
 
 const convertToOperationNode = (
   node: any,
@@ -80,7 +80,7 @@ export const convertToWorkflowNode = (node: any): WorkflowNode =>
         id: P.string,
         nextNodeId: P.string.optional(),
         isStart: P.boolean,
-        isEnd: P.boolean
+        isEnd: P.boolean,
       },
       (node) =>
         ({
@@ -88,7 +88,7 @@ export const convertToWorkflowNode = (node: any): WorkflowNode =>
           id: node.id,
           nextNodeId: node.nextNodeId,
           isStart: node.isStart,
-          isEnd: node.isEnd
+          isEnd: node.isEnd,
         }) satisfies WorkflowNode,
     )
     .otherwise(() => {
@@ -107,8 +107,8 @@ export type WorkflowNodeExecution = {
   nodeId: string;
   nextNodeId?: string;
   status: ExecutionStatus;
-  isStart: boolean,
-  isEnd: boolean,
+  isStart: boolean;
+  isEnd: boolean;
   input?: any;
   output?: any;
   createdAt: Date;

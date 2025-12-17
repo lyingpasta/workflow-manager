@@ -4,7 +4,6 @@ import { App } from 'supertest/types';
 import { AppModule } from 'src/app.module';
 import { PrismaService } from 'src/infrastructure/persistence/prisma.service';
 import { randomUUID } from 'node:crypto';
-import { WorkflowExecutionEventProducer } from 'src/infrastructure/bull/producers/workflow-execution.producer';
 import { NodeExecutionEventProducer } from 'src/infrastructure/bull/producers/node-execution.producer';
 import { setTimeout } from 'node:timers/promises';
 
@@ -14,7 +13,6 @@ describe('Create Workflow Execution', () => {
   let workflowId: string;
   let workflowSchemaId: string;
   let workflowExecutionId: string;
-  let workflowExecutionEventProducer: WorkflowExecutionEventProducer;
   let nodeExecutionEventProducer: NodeExecutionEventProducer;
   let producerSpy: jest.SpyInstance;
 
@@ -23,9 +21,6 @@ describe('Create Workflow Execution', () => {
       imports: [AppModule],
     }).compile();
 
-    workflowExecutionEventProducer = moduleFixture.get(
-      WorkflowExecutionEventProducer,
-    );
     nodeExecutionEventProducer = moduleFixture.get(NodeExecutionEventProducer);
     prismaService = moduleFixture.get(PrismaService);
     app = moduleFixture.createNestApplication();
@@ -35,9 +30,6 @@ describe('Create Workflow Execution', () => {
     workflowId = randomUUID();
     workflowSchemaId = randomUUID();
     workflowExecutionId = randomUUID();
-    producerSpy = jest
-      .spyOn(nodeExecutionEventProducer, 'produceStartEvent')
-      .mockImplementation(jest.fn());
   });
 
   afterAll(async () => {
@@ -45,10 +37,11 @@ describe('Create Workflow Execution', () => {
     await prismaService.workflowExecution.deleteMany();
     await prismaService.workflowSchema.deleteMany();
     await prismaService.workflow.deleteMany();
+    jest.resetAllMocks();
   });
 
-  describe('when execution already exists ', () => {
-    it('should emit start node execution event', async () => {
+  describe('when execution is already started', () => {
+    it('should execute node and emit start node execution event with input', async () => {
       const schema = {
         nodes: [
           {
@@ -62,6 +55,15 @@ describe('Create Workflow Execution', () => {
           },
           {
             id: '1',
+            type: 'extract',
+            source: 'node',
+            paths: [{ path: 'first' }, { path: 'second', outputPath: 'new' }],
+            name: 'extract',
+            isStart: false,
+            isEnd: false,
+          },
+          {
+            id: '2',
             type: 'transform',
             operation: 'add',
             paths: ['test'],
@@ -70,7 +72,10 @@ describe('Create Workflow Execution', () => {
             isEnd: true,
           },
         ],
-        flows: [{ from: '0', to: '1' }],
+        flows: [
+          { from: '0', to: '1' },
+          { from: '1', to: '2' },
+        ],
       };
       const workflow = await prismaService.workflow.create({
         data: {
@@ -95,27 +100,70 @@ describe('Create Workflow Execution', () => {
           status: 'created',
         },
       });
-
-      workflowExecutionEventProducer.produceStartEvent({
-        workflowExecutionId: workflowExecution.id,
+      const input = {
+        first: 'firstValue',
+        second: 'secondValue',
+        third: 'shouldBeIgnored',
+      };
+      const nodeExecution = await prismaService.nodeExecution.create({
+        data: {
+          id: randomUUID(),
+          nodeId: '1',
+          nextNodeId: '2',
+          isStart: false,
+          isEnd: false,
+          workflowExecutionId: workflowExecution.id,
+          status: 'pending',
+        },
       });
-      await setTimeout(3000, true);
+
+      await nodeExecutionEventProducer.produceStartEvent({
+        nodeExecution: {
+          id: nodeExecution.id,
+          nodeId: nodeExecution.nodeId,
+          nextNodeId: nodeExecution.nextNodeId ?? undefined,
+          isStart: nodeExecution.isStart,
+          isEnd: nodeExecution.isEnd,
+          status: 'pending',
+          createdAt: nodeExecution.createdAt,
+          workflowExecutionId: nodeExecution.workflowExecutionId,
+        },
+        input,
+      });
+      producerSpy = jest
+        .spyOn(nodeExecutionEventProducer, 'produceStartEvent')
+        .mockImplementation(jest.fn());
+      await setTimeout(1500, true);
       const nodeExecutions = await prismaService.nodeExecution.findMany({
         where: { workflowExecutionId },
       });
-      expect(nodeExecutions).toHaveLength(1);
-      expect(producerSpy).toHaveBeenCalledWith(
-        expect.objectContaining({
-          nodeExecution: expect.objectContaining({
-            nodeId: '0',
-            nextNodeId: '1',
-            status: 'pending',
-            isStart: true,
-            isEnd: false,
-            workflowExecutionId: workflowExecution.id,
+      expect(nodeExecutions).toHaveLength(2);
+      expect(nodeExecutions).toMatchObject(
+        expect.arrayContaining([
+          expect.objectContaining({
+            id: nodeExecution.id,
+            status: 'succeeded',
+            input,
+            output: {
+              first: 'firstValue',
+              new: 'secondValue',
+            },
           }),
-        }),
+        ]),
       );
+      expect(producerSpy).toHaveBeenCalledWith({
+        nodeExecution: expect.objectContaining({
+          nodeId: '2',
+          status: 'pending',
+          isStart: false,
+          isEnd: true,
+          workflowExecutionId: workflowExecution.id,
+        }),
+        input: {
+          first: 'firstValue',
+          new: 'secondValue',
+        },
+      });
     });
   });
 });
