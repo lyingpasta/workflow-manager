@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { WorkflowSchemaRepositoryToken } from 'src/infrastructure/persistence/prisma-workflow-schema.adapter';
 import { type WorkflowSchemaRepository } from '../repositories/workflow-schema.repository';
 import { WorkflowExecutionRepositoryToken } from 'src/infrastructure/persistence/prisma-workflow-exection.adapter';
@@ -16,9 +16,9 @@ export class CreateWorkflowExecutionUseCase {
     private readonly workflowSchemaRepository: WorkflowSchemaRepository,
     @Inject(WorkflowExecutionRepositoryToken)
     private readonly workflowExecutionRepository: WorkflowExecutionRepository,
-    @Inject()
+    @Inject(forwardRef(() => WorkflowExecutionEventProducer))
     private readonly workflowExecutionEventProducer: WorkflowExecutionEventProducer,
-  ) {}
+  ) { }
 
   async execute(port: CreateWorkflowExecutionUseCasePort): Promise<void> {
     const workflowSchema =

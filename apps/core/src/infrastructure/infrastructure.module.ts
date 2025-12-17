@@ -1,4 +1,4 @@
-import { Module, OnModuleInit } from '@nestjs/common';
+import { forwardRef, Module, OnModuleInit } from '@nestjs/common';
 import { WorkflowRepositoryProvider } from './persistence/prisma-workflow.adapter';
 import { PrismaService } from './persistence/prisma.service';
 import { WorkflowSchemaRepositoryProvider } from './persistence/prisma-workflow-schema.adapter';
@@ -11,11 +11,14 @@ import {
 } from 'src/value-objects/bullmq';
 import { WorkflowExecutionEventConsumer } from './bull/consumers/workflow-execution.consumer';
 import { NodeExecutionRepositoryProvider } from './persistence/prisma-node-exection.adapter';
+import { NodeExecutionEventProducer } from './bull/producers/node-execution.producer';
+import { DomainModule } from 'src/domain/domain.module';
 
 @Module({
   imports: [
     BullModule.registerQueue({ name: WORKFLOW_EXECUTION_QUEUE }),
     BullModule.registerQueue({ name: NODE_EXECUTION_QUEUE }),
+    forwardRef(() => DomainModule)
   ],
   providers: [
     WorkflowRepositoryProvider,
@@ -24,6 +27,7 @@ import { NodeExecutionRepositoryProvider } from './persistence/prisma-node-exect
     PrismaService,
     WorkflowExecutionEventProducer,
     WorkflowExecutionEventConsumer,
+    NodeExecutionEventProducer,
     NodeExecutionRepositoryProvider,
   ],
   exports: [
@@ -31,7 +35,8 @@ import { NodeExecutionRepositoryProvider } from './persistence/prisma-node-exect
     WorkflowSchemaRepositoryProvider,
     WorkflowExecutionRepositoryProvider,
     WorkflowExecutionEventProducer,
+    NodeExecutionEventProducer,
     NodeExecutionRepositoryProvider,
   ],
 })
-export class InfrastructureModule {}
+export class InfrastructureModule { }

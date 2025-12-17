@@ -70,7 +70,7 @@ const convertToOperationNode = (
       (node) => node satisfies ControlNode,
     )
     .otherwise(() => {
-      throw new Error(`Unknow node type ${node}`);
+      throw new Error(`Unknow node type ${JSON.stringify(node)}`);
     });
 
 export const convertToWorkflowNode = (node: any): WorkflowNode =>
@@ -101,6 +101,7 @@ export type ExecutionStatus =
   | 'ongoing'
   | 'succeeded'
   | 'failed';
+
 export type WorkflowNodeExecution = {
   id: string;
   nodeId: string;

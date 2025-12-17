@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { WorkflowExecutionRepositoryToken } from 'src/infrastructure/persistence/prisma-workflow-exection.adapter';
 import { type WorkflowExecutionRepository } from '../repositories/workflow-execution.repository';
 import { match, P } from 'ts-pattern';
@@ -22,7 +22,7 @@ export class StartWorkflowExecutionUseCase {
     private readonly workflowExecutionRepository: WorkflowExecutionRepository,
     @Inject(NodeExecutionRepositoryToken)
     private readonly nodeExecutionRepository: NodeExecutionRepository,
-    @Inject()
+    @Inject(forwardRef(() => NodeExecutionEventProducer))
     private readonly nodeExecutionEventProducer: NodeExecutionEventProducer
   ) { }
 
@@ -31,7 +31,8 @@ export class StartWorkflowExecutionUseCase {
       await this.workflowExecutionRepository.getWithWorkflowSchema(
         port.workflowExecutionId,
       );
-    return match(workflowExecution)
+
+    await match(workflowExecution)
       .with({ status: 'created' }, () => this.startExecution(workflowExecution))
       .otherwise(() => {
         throw new Error(
@@ -46,18 +47,23 @@ export class StartWorkflowExecutionUseCase {
       return;
     }
 
-    await Promise.all([...nodes.values()].map(async (node) => {
-      const execution = await this.nodeExecutionRepository.create({
-        status: "pending",
-        nodeId: node.id,
-        nextNodeId: node.nextNodeId,
-        workflowExecutionId: workflowExecution.id,
-        isStart: node.isStart,
-        isEnd: node.isEnd
-      })
+    const nodesArray = [...nodes.values()]
+    return match(nodesArray.find((node) => node.isStart === true))
+      .with(P.nonNullable, async (starterNode) => {
+        const execution = await this.nodeExecutionRepository.create({
+          status: "pending",
+          nodeId: starterNode.id,
+          nextNodeId: starterNode.nextNodeId,
+          workflowExecutionId: workflowExecution.id,
+          isStart: starterNode.isStart,
+          isEnd: starterNode.isEnd
+        })
 
-      return this.nodeExecutionEventProducer.produceStartEvent(execution)
-    }));
+        return this.nodeExecutionEventProducer.produceStartEvent(execution)
+      })
+      .otherwise(() => {
+        throw new Error(`No starter node for execution ${workflowExecution.id}`)
+      })
   }
 
   private prepareWorkflowExecutionData(workflowExecution: WorkflowExecution) {
@@ -73,9 +79,9 @@ export class StartWorkflowExecutionUseCase {
   }
 
   private buildNodesTreeMap(schema: { nodes: any[]; flows: any[] }) {
-    const nodesMap: Map<string, WorkflowNode> = new Map(
-      schema.nodes.map((node: any) => [node.id, convertToWorkflowNode(node)]),
-    );
+    const nodesMap: Map<string, WorkflowNode> = new Map()
+    schema.nodes.map((node) => nodesMap.set(node.id, convertToWorkflowNode(node)));
+
     for (let maybeFlowArrow of schema.flows as any[]) {
       match(maybeFlowArrow)
         .with({ from: P.string, to: P.string }, (arrowFlow) => {
@@ -91,7 +97,7 @@ export class StartWorkflowExecutionUseCase {
         .otherwise(() => {
           throw new Error('Corrupted arrow data');
         });
-      return nodesMap;
     }
+    return nodesMap;
   }
 }

@@ -9,7 +9,7 @@ export const fromPrismaToDomain = (
   prisma: PersistedWorkflowSchema,
 ): WorkflowSchema => ({
   id: prisma.id,
-  schema: prisma.schema?.toString(),
+  schema: prisma.schema,
   createdAt: prisma.createdAt,
   updatedAt: prisma.updatedAt ?? undefined,
   workflowId: prisma.workflowId,
@@ -21,7 +21,7 @@ export class PrismaWorkflowSchemaAdapter implements WorkflowSchemaRepository {
   constructor(
     @Inject()
     private readonly prismaService: PrismaService,
-  ) {}
+  ) { }
 
   async create(
     data: Omit<WorkflowSchema, 'id' | 'createdAt'>,

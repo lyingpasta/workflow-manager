@@ -36,7 +36,7 @@ const fromPrismaToDomain = (
 
 @Injectable()
 export class PrismaWorkflowExecutionAdapter implements WorkflowExecutionRepository {
-  constructor(private prismaService: PrismaService) {}
+  constructor(private prismaService: PrismaService) { }
 
   async create(
     data: Omit<WorkflowExecution, 'id' | 'createdAt'>,
