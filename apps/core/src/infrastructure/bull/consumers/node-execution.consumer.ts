@@ -33,7 +33,7 @@ export class NodeExecutionEventConsumer extends WorkerHost {
             input: P.nonNullable,
           },
         },
-        (job) => this.startNodeExecutionUseCase.execute(job.data),
+        (job) => this.startNodeExecutionUseCase.execute({ input: job.data.input, nodeExecution: { ...job.data.nodeExecution, createdAt: new Date(job.data.nodeExecution.createdAt) } }),
       )
       .otherwise(() => {
         console.warn(
