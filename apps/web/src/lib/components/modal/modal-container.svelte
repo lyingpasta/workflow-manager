@@ -43,7 +43,7 @@
 				onclick={cancel}>Cancel</button
 			>
 			<button
-				class="w-25 p-2 hover:bg-amber-700 hover:text-gray-50 rounded-sm bg-amber-500 text-gray-900 cursor-pointer transition-colors"
+				class="w-25 p-2 hover:bg-blue-700 hover:text-gray-50 rounded-sm bg-blue-500 text-gray-900 cursor-pointer transition-colors"
 				onclick={commit}>Commit</button
 			>
 		</div>

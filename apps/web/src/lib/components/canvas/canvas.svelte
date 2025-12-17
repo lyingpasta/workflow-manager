@@ -90,9 +90,10 @@
 					getCathodeCoordinatesForNode(toGlobalCoordinates(fromNode.coordinates)).y
 				);
 				context.bezierCurveTo(
-					getCathodeCoordinatesForNode(toGlobalCoordinates(fromNode.coordinates)).x + 150,
+					getCathodeCoordinatesForNode(toGlobalCoordinates(fromNode.coordinates)).x +
+						100 * zoomLevel,
 					getCathodeCoordinatesForNode(toGlobalCoordinates(fromNode.coordinates)).y,
-					getAnodeCoordinatesForNode(toGlobalCoordinates(toNode.coordinates)).x - 150,
+					getAnodeCoordinatesForNode(toGlobalCoordinates(toNode.coordinates)).x - 100 * zoomLevel,
 					getAnodeCoordinatesForNode(toGlobalCoordinates(toNode.coordinates)).y,
 					getAnodeCoordinatesForNode(toGlobalCoordinates(toNode.coordinates)).x,
 					getAnodeCoordinatesForNode(toGlobalCoordinates(toNode.coordinates)).y
@@ -261,7 +262,7 @@
 				maybeElectrodeWithinBoundaries.electrode === 'anode'
 			) {
 				context.lineWidth = 5;
-				context.strokeStyle = '#ff9933';
+				context.strokeStyle = '#77baff';
 				context.fillStyle = '#f6f6f6';
 			} else {
 				context.lineWidth = 2;
@@ -272,7 +273,7 @@
 
 			if (selectedNode && selectedNode.id === node.id) {
 				context.lineWidth = 5;
-				context.strokeStyle = '#ff9933';
+				context.strokeStyle = '#77baff';
 				context.fillStyle = '#f6f6f6';
 			} else {
 				context.lineWidth = 2;
@@ -293,7 +294,7 @@
 		context.beginPath();
 		for (let j = globalPosition.y; j < canvas.height; j += 50 * zoomLevel) {
 			for (let i = globalPosition.x; i < canvas.width; i += 50 * zoomLevel) {
-				context.strokeStyle = '#ffaf44';
+				context.strokeStyle = '#babaff';
 				context.lineWidth = 1;
 				const fromX = Math.max(i - 3 * zoomLevel, 0);
 				const toX = Math.max(i + 3 * zoomLevel, 0);
@@ -642,7 +643,7 @@
 	oncontextmenu={(event) => event.preventDefault()}
 ></canvas>
 
-<div class="absolute flex bottom-10 right-10">
+<div class="absolute flex bottom-10 right-10 z-60">
 	<Button onClick={zoomIn} type="normal" position="left">+</Button>
 	<div
 		class="h-10 w-12 flex justify-center items-center bg-white border-gray-300 border-t border-b"

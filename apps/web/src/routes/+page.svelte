@@ -1,13 +1,13 @@
 <div
-	class="w-full bg-amber-100 text-amber-600 pl-10 pt-5 pb-5 flex flex-row items-center gap-15 border-b border-solid"
+	class="w-full bg-blue-100 text-blue-600 pl-10 pt-5 pb-5 flex flex-row items-center gap-15 border-b border-solid"
 >
 	<span class="mdi--dinosaur-pixel"></span>
 	<h1>Workflow Manager</h1>
 </div>
-<div class="w-full h-full bg-amber-50 flex flex-row p-10">
-	<div class="w-1/4 text-amber-600">Connected as LyingPasta</div>
+<div class="w-full h-full bg-blue-50 flex flex-row p-10">
+	<div class="w-1/4 text-blue-600">Connected as LyingPasta</div>
 	<a
-		class="w-full h-fit border rounded-md border-solid border-amber-600 text-amber-600 p-7 hover:bg-amber-400 transition-colors"
+		class="w-full h-fit border rounded-md border-solid border-blue-600 text-blue-600 p-7 hover:bg-blue-400 hover:text-blue-50 transition-colors"
 		href="/workflow/0"
 	>
 		Workflow 0
