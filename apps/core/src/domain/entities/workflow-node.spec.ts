@@ -1,3 +1,4 @@
+import { match } from "ts-pattern"
 import { convertToWorkflowNode, WorkflowNode } from "./workflow-node.entity"
 
 describe("Workflow Nodes", () => {
@@ -48,9 +49,20 @@ describe("Workflow Nodes", () => {
     it.each(cases[key].ok)(`should convert it to ${key} node`, (node) => {
       const result = convertToWorkflowNode(node)
       expect(result).toBeDefined()
+      const base = match(key)
+        .with("transform", () => ({
+          operation: node.operation,
+        }))
+        .with("extract", () => ({
+          source: node.source
+        }))
+        .run()
+
       expect(result).toMatchObject(expect.objectContaining({
+        ...base,
+        nextNodeId: node.nextNodeId,
+        name: node.name,
         type: key,
-        operation: key !== "transform" ? undefined : node.operation,
         id: node.id,
         paths: node.paths,
         isStart: node.isStart,
