@@ -21,6 +21,11 @@ export class PrismaWorkflowAdapter implements WorkflowRepository {
     private readonly prismaService: PrismaService,
   ) {}
 
+  async getAll(): Promise<Workflow[]> {
+    const prisma = await this.prismaService.workflow.findMany();
+    return prisma.map(fromPrismaToDomain);
+  }
+
   async create(
     workflow: Omit<Workflow, 'id' | 'createdAt' | 'updatedAt' | 'executions'>,
   ): Promise<Workflow> {

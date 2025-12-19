@@ -6,11 +6,13 @@ import { CreateWorkflowExecutionUseCase } from './use-case/create-workflow-execu
 import { NodeService } from './services/node.service';
 import { StartNodeExecutionUseCase } from './use-case/start-node-execution.use-case';
 import { WorkflowService } from './services/workflow.service';
+import { GetWorkflowListUseCase } from './use-case/get-workflow-list.use-case';
 
 const useCases = [
   CreateWorkflowExecutionUseCase,
   CreateWorkflowUseCase,
   StartWorkflowExecutionUseCase,
+  GetWorkflowListUseCase,
   StartNodeExecutionUseCase,
 ];
 
