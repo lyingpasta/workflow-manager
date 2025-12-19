@@ -20,6 +20,7 @@
 	function createNewNode(canvasNode: CanvasNode, type: NodeType) {
 		canvasNodes.set(canvasNode.id, canvasNode);
 		notificationStore.add(`New ${type} node has been added`, 'info', undefined);
+		updateShouldSave();
 	}
 
 	function selectNode(node: CanvasNode) {
@@ -30,6 +31,7 @@
 		if (selectedNode) {
 			canvasNodes.set(selectedNode.id, { ...selectedNode, coordinates: newCoordinates });
 			selectedNode.coordinates = newCoordinates;
+			shouldSave = true;
 		}
 	}
 
@@ -42,6 +44,7 @@
 				);
 				selectedNode = undefined;
 				notificationStore.add(`Node ${node.title} has been deleted`, 'info', undefined);
+				updateShouldSave();
 			})
 			.run();
 	}
@@ -62,6 +65,7 @@
 					unmount(editNodeModal);
 					editNodeModal = undefined;
 					notificationStore.add(`Node ${node.title} has been updated`, 'info', undefined);
+					updateShouldSave();
 				}
 			}
 		});
@@ -72,6 +76,11 @@
 			fromNodeId: from.id,
 			toNodeId: to.id
 		});
+		updateShouldSave();
+	}
+
+	function updateShouldSave() {
+		shouldSave = true;
 	}
 </script>
 
@@ -80,7 +89,10 @@
 <div id="workflow-container" class="relative h-full w-full">
 	<div class={` absolute w-full flex  top-4 left-4 z-50`}>
 		<Button
-			onClick={() => {}}
+			onClick={() => {
+				notificationStore.add(`Workflow has been saved successfully!`, 'info', undefined);
+				shouldSave = false;
+			}}
 			position="standalone"
 			type={shouldSave ? 'save' : 'normal'}
 			disabled={!shouldSave}
