@@ -57,7 +57,7 @@
 	<link rel="icon" href={favicon} />
 </svelte:head>
 
-<div id="main" class="relative w-screen h-screen">
+<div id="main" class="relative w-screen h-screen overflow-hidden">
 	{@render children()}
 	<div id="notifications" class="absolute z-100 top-3 right-5 flex flex-col-reverse"></div>
 </div>
