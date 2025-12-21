@@ -31,7 +31,7 @@ export async function getWorkflows(): Promise<Workflow[]> {
 }
 
 export async function createWorkflow(workflow: Pick<Workflow, "name">): Promise<Workflow> {
-  const workflows = await (await fetch(`${coreUrl}/workflows`, {
+  const res = await (await fetch(`${coreUrl}/workflows`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
@@ -39,7 +39,7 @@ export async function createWorkflow(workflow: Pick<Workflow, "name">): Promise<
     body: JSON.stringify({ name: workflow.name, isActive: false })
   })).json()
 
-  return workflows.map(toWorkflow)
+  return toWorkflow(res)
 }
 
 export async function getWorkflowSchema(workflowId: string): Promise<WorkflowSchema> {

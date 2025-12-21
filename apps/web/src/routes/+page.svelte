@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
+	import { goto, invalidateAll } from '$app/navigation';
 	import Item from '$lib/components/workflow-list/item.svelte';
 	import List from '$lib/components/workflow-list/list.svelte';
 	import NewItem from '$lib/components/workflow-list/new-item.svelte';
@@ -9,6 +9,8 @@
 
 	let mountedNewWorkflowWizard: any = $state.raw(undefined);
 	let { data }: { data: PageData } = $props();
+
+	const workflowList = $derived(data.workflows);
 
 	function createNewWorkflow() {
 		const target = document.getElementById('new-workflow-container');
@@ -32,6 +34,8 @@
 
 	async function submitCreationNewWorkflow(name: string) {
 		await createWorkflow({ name });
+		unmount(mountedNewWorkflowWizard, { outro: true });
+		await invalidateAll();
 	}
 </script>
 
@@ -43,7 +47,7 @@
 </div>
 <div class="w-full h-full bg-blue-50 flex flex-row p-10">
 	<div class="w-1/4 text-blue-600">Connected as LyingPasta</div>
-	<div class="w-full flex flex-col">
+	<div class="w-full flex flex-col gap-3">
 		<div class="w-full flex flex-row justify-between mb-3 items-center">
 			<h2 class="text-lg text-blue-600">Your workflows:</h2>
 			<button
@@ -53,8 +57,15 @@
 		</div>
 		<div id="new-workflow-container"></div>
 		<List
-			>{#each data.workflows as workflow}
-				<Item onClick={() => goto(`/workflows/${workflow.id}`)} name={workflow.name}></Item>
+			>{#each workflowList as workflow}
+				<Item
+					onClick={() => goto(`/workflows/${workflow.id}`)}
+					name={workflow.name}
+					activated={workflow.isActive}
+					onActivationToggled={() => {
+						console.log('should activate');
+					}}
+				></Item>
 			{/each}</List
 		>
 	</div>

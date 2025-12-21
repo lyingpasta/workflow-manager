@@ -22,7 +22,7 @@ export class PrismaWorkflowAdapter implements WorkflowRepository {
   ) { }
 
   async getAll(): Promise<Workflow[]> {
-    const prisma = await this.prismaService.workflow.findMany();
+    const prisma = await this.prismaService.workflow.findMany({ orderBy: { createdAt: "desc" } });
     return prisma.map(fromPrismaToDomain);
   }
 
