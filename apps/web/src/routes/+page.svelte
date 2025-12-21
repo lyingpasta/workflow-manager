@@ -1,3 +1,41 @@
+<script lang="ts">
+	import { goto } from '$app/navigation';
+	import Item from '$lib/components/workflow-list/item.svelte';
+	import List from '$lib/components/workflow-list/list.svelte';
+	import NewItem from '$lib/components/workflow-list/new-item.svelte';
+	import { mount, unmount } from 'svelte';
+	import type { PageData } from './$types';
+	import { createWorkflow } from '$lib/client/core';
+
+	let mountedNewWorkflowWizard: any = $state.raw(undefined);
+	let { data }: { data: PageData } = $props();
+
+	function createNewWorkflow() {
+		const target = document.getElementById('new-workflow-container');
+		if (target) {
+			mountedNewWorkflowWizard = mount(NewItem, {
+				target,
+				props: {
+					onSubmit: submitCreationNewWorkflow,
+					onCancel: cancelNewWorkflowCreation,
+					initialName: 'Workflow #?'
+				}
+			});
+		}
+	}
+
+	function cancelNewWorkflowCreation() {
+		if (mountedNewWorkflowWizard) {
+			console.log('unmounting');
+			unmount(mountedNewWorkflowWizard, { outro: true });
+		}
+	}
+
+	async function submitCreationNewWorkflow(name: string) {
+		await createWorkflow({ name });
+	}
+</script>
+
 <div
 	class="w-full bg-blue-100 text-blue-600 pl-10 pt-5 pb-5 flex flex-row items-center gap-15 border-b border-solid"
 >
@@ -6,12 +44,21 @@
 </div>
 <div class="w-full h-full bg-blue-50 flex flex-row p-10">
 	<div class="w-1/4 text-blue-600">Connected as LyingPasta</div>
-	<a
-		class="w-full h-fit border rounded-md border-solid border-blue-600 text-blue-600 p-7 hover:bg-blue-400 hover:text-blue-50 transition-colors"
-		href="/workflow/0"
-	>
-		Workflow 0
-	</a>
+	<div class="w-full flex flex-col">
+		<div class="w-full flex flex-row justify-between mb-3 items-center">
+			<h2 class="text-lg text-blue-600">Your workflows:</h2>
+			<button
+				class="bg-blue-500 text-blue-50 border border-solid border-blue-700 rounded-sm px-7 py-2 hover:bg-blue-800 cursor-pointer"
+				onclick={createNewWorkflow}>New</button
+			>
+		</div>
+		<div id="new-workflow-container"></div>
+		<List
+			>{#each data.workflows as workflow}
+				<Item onClick={() => goto(`/workflows/${workflow.id}`)} name={workflow.name}></Item>
+			{/each}</List
+		>
+	</div>
 </div>
 
 <style>
