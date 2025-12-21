@@ -8,10 +8,6 @@ import { WorkflowSchema } from '../entities/workflow-schema.entity';
 
 type CreateWorkflowUseCasePort = {
   workflow: Omit<Workflow, 'id' | 'createdAt' | 'schema' | 'executions'>;
-  schema: Omit<
-    WorkflowSchema,
-    'id' | 'createdAt' | 'workflowId' | 'executions'
-  >;
 };
 
 type CreateWorkflowUseCaseResult = {
@@ -26,14 +22,15 @@ export class CreateWorkflowUseCase {
     private readonly workflowRepository: WorkflowRepository,
     @Inject(WorkflowSchemaRepositoryToken)
     private readonly workflowSchemaRepository: WorkflowSchemaRepository,
-  ) {}
+  ) { }
 
   async execute(
     port: CreateWorkflowUseCasePort,
   ): Promise<CreateWorkflowUseCaseResult> {
     const workflow = await this.workflowRepository.create(port.workflow);
     const schema = await this.workflowSchemaRepository.create({
-      ...port.schema,
+      schema: {},
+      isActive: true,
       workflowId: workflow.id,
     });
 

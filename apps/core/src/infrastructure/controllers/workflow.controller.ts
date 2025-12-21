@@ -3,18 +3,18 @@ import { CreateWorkflowUseCase } from 'src/domain/use-case/create-workflow.use-c
 import { CreateWorkflowDTO } from './dto/create-workflow.dto';
 import { GetWorkflowListUseCase } from 'src/domain/use-case/get-workflow-list.use-case';
 
-@Controller('/workflow')
+@Controller('/workflows')
 export class WorkflowController {
   constructor(
     @Inject()
     private readonly createWorkflowUseCase: CreateWorkflowUseCase,
     @Inject()
     private readonly getWorkflowListUseCase: GetWorkflowListUseCase,
-  ) {}
+  ) { }
 
   @Post()
   createWorkflow(@Body() input: CreateWorkflowDTO) {
-    return this.createWorkflowUseCase.execute(input);
+    return this.createWorkflowUseCase.execute({ workflow: input });
   }
 
   @Get()
