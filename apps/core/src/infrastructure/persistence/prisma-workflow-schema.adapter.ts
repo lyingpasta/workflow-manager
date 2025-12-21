@@ -46,7 +46,6 @@ export class PrismaWorkflowSchemaAdapter implements WorkflowSchemaRepository {
       where: {
         workflow: {
           id: workflowId,
-          isActive: true,
         },
       },
     });
