@@ -6,6 +6,7 @@
 	import { mount, unmount } from 'svelte';
 	import type { PageData } from './$types';
 	import { createWorkflow } from '$lib/client/core';
+	import Banner from '$lib/components/workflow-list/banner.svelte';
 
 	let mountedNewWorkflowWizard: any = $state.raw(undefined);
 	let { data }: { data: PageData } = $props();
@@ -56,18 +57,19 @@
 			>
 		</div>
 		<div id="new-workflow-container"></div>
-		<List
-			>{#each workflowList as workflow}
-				<Item
-					onClick={() => goto(`/workflows/${workflow.id}`)}
-					name={workflow.name}
-					activated={workflow.isActive}
-					onActivationToggled={() => {
-						console.log('should activate');
-					}}
-				></Item>
-			{/each}</List
-		>
+		{#if workflowList.length === 0}<Banner></Banner>{:else}
+			<List
+				>{#each workflowList as workflow}
+					<Item
+						onClick={() => goto(`/workflows/${workflow.id}`)}
+						name={workflow.name}
+						activated={workflow.isActive}
+						onActivationToggled={() => {
+							console.log('should activate');
+						}}
+					></Item>
+				{/each}</List
+			>{/if}
 	</div>
 </div>
 
