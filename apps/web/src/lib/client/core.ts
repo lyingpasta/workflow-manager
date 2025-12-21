@@ -1,4 +1,4 @@
-import type { Workflow } from "$lib/types/nodes"
+import type { WorkflowSchema, Workflow } from "$lib/types/workflow"
 
 const coreUrl = "http://localhost:3000"
 const toWorkflow = (input: any): Workflow => {
@@ -7,6 +7,14 @@ const toWorkflow = (input: any): Workflow => {
     name: input.name,
     isActive: input.isActive,
     createdAt: input.createdAt
+  }
+}
+const toWorkflowSchema = (input: any): WorkflowSchema => {
+  return {
+    id: input.id,
+    isActive: input.isActive,
+    schema: input.schema,
+    workflowId: input.workflowId
   }
 }
 
@@ -23,7 +31,6 @@ export async function getWorkflows(): Promise<Workflow[]> {
 }
 
 export async function createWorkflow(workflow: Pick<Workflow, "name">): Promise<Workflow> {
-  console.log(workflow)
   const workflows = await (await fetch(`${coreUrl}/workflows`, {
     method: "POST",
     headers: {
@@ -33,4 +40,19 @@ export async function createWorkflow(workflow: Pick<Workflow, "name">): Promise<
   })).json()
 
   return workflows.map(toWorkflow)
+}
+
+export async function getWorkflowSchema(workflowId: string): Promise<WorkflowSchema> {
+  const workflowSchema = await (await fetch(`${coreUrl}/schemas?workflowId=${workflowId}`)).json()
+  return toWorkflowSchema(workflowSchema)
+}
+
+export async function saveWorkflowSchema(workflowSchema: Pick<WorkflowSchema, "id" | "schema">) {
+  await (await fetch(`${coreUrl}/schemas`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(workflowSchema)
+  })).json()
 }

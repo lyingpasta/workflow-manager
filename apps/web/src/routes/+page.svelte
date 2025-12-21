@@ -26,7 +26,6 @@
 
 	function cancelNewWorkflowCreation() {
 		if (mountedNewWorkflowWizard) {
-			console.log('unmounting');
 			unmount(mountedNewWorkflowWizard, { outro: true });
 		}
 	}

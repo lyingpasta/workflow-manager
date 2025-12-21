@@ -129,6 +129,9 @@ importers:
       ts-pattern:
         specifier: ^5.9.0
         version: 5.9.0
+      valibot:
+        specifier: ^1.2.0
+        version: 1.2.0(typescript@5.9.3)
     devDependencies:
       '@eslint/compat':
         specifier: ^1.4.0

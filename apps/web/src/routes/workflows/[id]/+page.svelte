@@ -8,11 +8,18 @@
 	import type { NodeFlowArrow, NodeType } from '$lib/types/nodes';
 	import { mount, unmount } from 'svelte';
 	import { match, P } from 'ts-pattern';
+	import type { PageData } from './$types';
+	import { buildNodeTree, buildSchemaFromTree } from '$lib/utils/nodes';
+	import { submitWorkflowSchema } from './save-workflow-schema.remote';
+
+	let { data }: { data: PageData } = $props();
+
+	const { nodes, arrowFlows } = buildNodeTree(data.schema);
 
 	let width: number = $state(0);
 	let height: number = $state(0);
-	let canvasNodes: Map<string, CanvasNode> = $state(new Map());
-	let nodeFlowArrows: NodeFlowArrow[] = $state([]);
+	let canvasNodes: Map<string, CanvasNode> = $state(nodes);
+	let nodeFlowArrows: NodeFlowArrow[] = $state(arrowFlows);
 	let selectedNode: CanvasNode | undefined = $state(undefined);
 	let shouldSave: boolean = $state(false);
 	let editNodeModal: any | undefined = $state.raw(undefined);
@@ -82,6 +89,15 @@
 	function updateShouldSave() {
 		shouldSave = true;
 	}
+
+	async function saveWorkflowSchema() {
+		await submitWorkflowSchema({
+			id: data.schema.id,
+			...buildSchemaFromTree({ nodes: canvasNodes, arrowFlows: nodeFlowArrows })
+		});
+		shouldSave = false;
+		notificationStore.add(`Workflow has been saved successfully!`, 'info', undefined);
+	}
 </script>
 
 <svelte:window bind:innerWidth={width} bind:innerHeight={height} />
@@ -89,10 +105,7 @@
 <div id="workflow-container" class="relative h-full w-full">
 	<div class={` absolute w-full flex  top-4 left-4 z-50`}>
 		<Button
-			onClick={() => {
-				notificationStore.add(`Workflow has been saved successfully!`, 'info', undefined);
-				shouldSave = false;
-			}}
+			onClick={saveWorkflowSchema}
 			position="standalone"
 			type={shouldSave ? 'save' : 'normal'}
 			disabled={!shouldSave}
