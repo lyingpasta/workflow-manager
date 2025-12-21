@@ -7,13 +7,17 @@ import { NodeService } from './services/node.service';
 import { StartNodeExecutionUseCase } from './use-case/start-node-execution.use-case';
 import { WorkflowService } from './services/workflow.service';
 import { GetWorkflowListUseCase } from './use-case/get-workflow-list.use-case';
+import { GetWorkflowSchemaUseCase } from './use-case/get-workflow-schema.use-case';
+import { SaveWorkflowSchemaUseCase } from './use-case/save-workflow-schema.use-case';
 
 const useCases = [
   CreateWorkflowExecutionUseCase,
   CreateWorkflowUseCase,
   StartWorkflowExecutionUseCase,
   GetWorkflowListUseCase,
+  GetWorkflowSchemaUseCase,
   StartNodeExecutionUseCase,
+  SaveWorkflowSchemaUseCase
 ];
 
 @Module({
@@ -21,4 +25,4 @@ const useCases = [
   imports: [forwardRef(() => InfrastructureModule)],
   exports: [...useCases],
 })
-export class DomainModule {}
+export class DomainModule { }

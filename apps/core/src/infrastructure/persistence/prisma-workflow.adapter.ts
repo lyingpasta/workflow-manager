@@ -19,7 +19,7 @@ export class PrismaWorkflowAdapter implements WorkflowRepository {
   constructor(
     @Inject()
     private readonly prismaService: PrismaService,
-  ) {}
+  ) { }
 
   async getAll(): Promise<Workflow[]> {
     const prisma = await this.prismaService.workflow.findMany();
@@ -37,6 +37,8 @@ export class PrismaWorkflowAdapter implements WorkflowRepository {
     });
     return fromPrismaToDomain(prisma);
   }
+
+
 }
 
 export const WorkflowRepositoryToken = Symbol('WorkflowRepository');

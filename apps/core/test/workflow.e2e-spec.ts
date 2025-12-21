@@ -27,7 +27,7 @@ describe('AppController (e2e)', () => {
 
   it('should create new workflow with its schema', async () => {
     await request(app.getHttpServer())
-      .post('/workflow')
+      .post('/workflows')
       .send({
         workflow: {
           name: 'test name',

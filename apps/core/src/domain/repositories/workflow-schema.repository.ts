@@ -5,4 +5,5 @@ export interface WorkflowSchemaRepository {
     data: Omit<WorkflowSchema, 'id' | 'createdAt'>,
   ): Promise<WorkflowSchema>;
   getByActiveWorkflowId(workflowId: string): Promise<WorkflowSchema>;
+  update(id: string, data: Partial<Omit<WorkflowSchema, "id" | "createdAt" | "updatedAt">>): Promise<WorkflowSchema>
 }
