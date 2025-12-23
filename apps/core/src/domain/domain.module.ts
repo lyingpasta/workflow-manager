@@ -9,15 +9,17 @@ import { WorkflowService } from './services/workflow.service';
 import { GetWorkflowListUseCase } from './use-case/get-workflow-list.use-case';
 import { GetWorkflowSchemaUseCase } from './use-case/get-workflow-schema.use-case';
 import { SaveWorkflowSchemaUseCase } from './use-case/save-workflow-schema.use-case';
+import { GetWorkflowExecutionsOfWorkflowUseCase } from './use-case/get-workflow-executions-of-workflow.use-case';
 
 const useCases = [
   CreateWorkflowExecutionUseCase,
   CreateWorkflowUseCase,
-  StartWorkflowExecutionUseCase,
+  GetWorkflowExecutionsOfWorkflowUseCase,
   GetWorkflowListUseCase,
   GetWorkflowSchemaUseCase,
+  SaveWorkflowSchemaUseCase,
   StartNodeExecutionUseCase,
-  SaveWorkflowSchemaUseCase
+  StartWorkflowExecutionUseCase,
 ];
 
 @Module({

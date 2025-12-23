@@ -36,7 +36,17 @@ const fromPrismaToDomain = (
 
 @Injectable()
 export class PrismaWorkflowExecutionAdapter implements WorkflowExecutionRepository {
-  constructor(private prismaService: PrismaService) {}
+  constructor(private prismaService: PrismaService) { }
+
+  async getWorkflowExecutionsByWorkflowId(workflowId: string): Promise<Omit<WorkflowExecution, 'workflowSchema'>[]> {
+    const prisma = await this.prismaService.workflowExecution.findMany({
+      where: {
+        workflowId
+      }
+    })
+    return prisma.map(fromPrismaToDomain)
+  }
+
   async update(
     id: string,
     data: Partial<
