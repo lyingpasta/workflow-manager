@@ -1,4 +1,4 @@
-import type { WorkflowSchema, Workflow } from "$lib/types/workflow"
+import type { WorkflowSchema, Workflow, WorkflowExecution } from "$lib/types/workflow"
 
 const coreUrl = "http://localhost:3000"
 const toWorkflow = (input: any): Workflow => {
@@ -54,5 +54,11 @@ export async function saveWorkflowSchema(workflowSchema: Pick<WorkflowSchema, "i
       "Content-Type": "application/json"
     },
     body: JSON.stringify(workflowSchema)
+  })).json()
+}
+
+export async function getWorkflowExecutions(workflowId: string): Promise<WorkflowExecution[]> {
+  return (await fetch(`${coreUrl}/executions?workflowId=${workflowId}`, {
+    method: "GET",
   })).json()
 }
