@@ -10,11 +10,13 @@ import { GetWorkflowListUseCase } from './use-case/get-workflow-list.use-case';
 import { GetWorkflowSchemaUseCase } from './use-case/get-workflow-schema.use-case';
 import { SaveWorkflowSchemaUseCase } from './use-case/save-workflow-schema.use-case';
 import { GetWorkflowExecutionsOfWorkflowUseCase } from './use-case/get-workflow-executions-of-workflow.use-case';
+import { GetWorkflowExecutionWithSchemaUseCase } from './use-case/get-workflow-executions-with-schema.use-case';
 
 const useCases = [
   CreateWorkflowExecutionUseCase,
   CreateWorkflowUseCase,
   GetWorkflowExecutionsOfWorkflowUseCase,
+  GetWorkflowExecutionWithSchemaUseCase,
   GetWorkflowListUseCase,
   GetWorkflowSchemaUseCase,
   SaveWorkflowSchemaUseCase,
