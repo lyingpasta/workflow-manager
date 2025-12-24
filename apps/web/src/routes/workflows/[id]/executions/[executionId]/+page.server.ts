@@ -1,12 +1,11 @@
-import { getWorkflowExecutions } from "$lib/client/core";
+import { getWorkflowExecutionWithSchema } from "$lib/client/core";
 import type { PageServerLoad } from "./$types";
 
 export const load: PageServerLoad = async ({ params }) => {
-  const workflowId = params.id
+  const executionId = params.executionId
 
-  const executions = await getWorkflowExecutions(workflowId)
-  console.log(executions)
+  const workflowExecution = await getWorkflowExecutionWithSchema(executionId)
   return {
-    executions
+    workflowExecution
   }
 }

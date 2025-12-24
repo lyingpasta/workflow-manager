@@ -62,3 +62,12 @@ export async function getWorkflowExecutions(workflowId: string): Promise<Workflo
     method: "GET",
   })).json()
 }
+
+export async function getWorkflowExecutionWithSchema(workflowExecutionId: string): Promise<WorkflowExecution> {
+  return (await fetch(`${coreUrl}/executions/${workflowExecutionId}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json"
+    }
+  })).json()
+}

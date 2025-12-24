@@ -29,7 +29,7 @@
 <li
 	role="menuitem"
 	tabindex="0"
-	class={`w-full px-3 py-2  border border-solid rounded-sm flex flex-row justify-between items-center border-blue-500 text-blue-700 transition-colors cursor-pointer ${isSelected ? 'bg-blue-300' : 'bg-blue-50 hover:bg-blue-400'}`}
+	class={`w-full px-3 py-2  border border-solid rounded-sm flex flex-row gap-30 justify-between items-center border-blue-500 text-blue-700 transition-colors cursor-pointer ${isSelected ? 'bg-blue-300' : 'bg-blue-50 hover:bg-blue-400'}`}
 	onclick={onClick}
 >
 	<div>

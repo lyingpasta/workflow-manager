@@ -14,10 +14,10 @@
 		readonly width: number;
 		readonly height: number;
 		readonly selectedNode: CanvasNode | undefined;
-		onNodeDraw: (...props: any[]) => any;
-		onNodeSelected: (...props: any[]) => any;
-		onNodeMoved: (...props: any[]) => any;
-		onFlowArrowAttached: (...props: any[]) => any;
+		onNodeDraw?: (...props: any[]) => any;
+		onNodeSelected?: (...props: any[]) => any;
+		onNodeMoved?: (...props: any[]) => any;
+		onFlowArrowAttached?: (...props: any[]) => any;
 	};
 
 	const NODE_DIMENSION = 100;
@@ -31,10 +31,10 @@
 		width,
 		height,
 		selectedNode,
-		onNodeDraw,
-		onNodeSelected,
-		onNodeMoved,
-		onFlowArrowAttached
+		onNodeDraw = () => {},
+		onNodeSelected = () => {},
+		onNodeMoved = () => {},
+		onFlowArrowAttached = () => {}
 	}: InputProps = $props();
 
 	let canvas: HTMLCanvasElement;
