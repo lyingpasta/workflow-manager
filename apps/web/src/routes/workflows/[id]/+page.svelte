@@ -14,6 +14,7 @@
 
 	let { data }: { data: PageData } = $props();
 
+	// svelte-ignore state_referenced_locally
 	const { nodes, arrowFlows } = buildNodeTree(data.schema);
 
 	let width: number = $state(0);
@@ -62,7 +63,7 @@
 			props: {
 				node: selectedNode,
 				onCancelButtonPressed: () => {
-					unmount(editNodeModal);
+					unmount(editNodeModal, { outro: true });
 					editNodeModal = undefined;
 					notificationStore.add(`Node edit canceled`, 'info', undefined);
 				},

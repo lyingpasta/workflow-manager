@@ -1,6 +1,8 @@
 <script lang="ts">
 	import type { CanvasNode } from '$lib/types/canvas';
+	import { scale } from 'svelte/transition';
 	import InputText from '../input-text.svelte';
+	import { bounceIn, bounceOut, expoIn } from 'svelte/easing';
 
 	let { node, onCancelButtonPressed, onCommitButtonPressed } = $props();
 
@@ -21,9 +23,17 @@
 		};
 		onCommitButtonPressed(newNode);
 	}
+
+	function customeBounceOut(t: number): number {
+		return Math.min(bounceOut(t) * 1.2, 1);
+	}
 </script>
 
-<div class="absolute w-full h-full p-5 z-60">
+<div
+	class="absolute w-full h-full p-5 z-60"
+	in:scale={{ duration: 500, easing: customeBounceOut, opacity: 0.9 }}
+	out:scale={{ duration: 300, easing: expoIn }}
+>
 	<div
 		class="rounded-lg w-full h-full bg-white border border-solid border-gray-500 p-2 justify-evenly flex flex-col gap-2"
 	>
