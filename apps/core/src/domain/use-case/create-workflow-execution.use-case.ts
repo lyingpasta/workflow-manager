@@ -18,7 +18,7 @@ export class CreateWorkflowExecutionUseCase {
     private readonly workflowExecutionRepository: WorkflowExecutionRepository,
     @Inject(forwardRef(() => WorkflowExecutionEventProducer))
     private readonly workflowExecutionEventProducer: WorkflowExecutionEventProducer,
-  ) {}
+  ) { }
 
   async execute(port: CreateWorkflowExecutionUseCasePort): Promise<void> {
     const workflowSchema =
@@ -26,6 +26,7 @@ export class CreateWorkflowExecutionUseCase {
         port.workflowId,
       );
     const workflowExecution = await this.workflowExecutionRepository.create({
+      workflowSchemaId: workflowSchema.id,
       workflowSchema,
       status: 'created',
     });

@@ -9,6 +9,7 @@ export type ExecutionStatus =
 
 export type WorkflowExecution = {
   id: string;
+  workflowSchemaId: string;
   workflowSchema: WorkflowSchema;
   status: ExecutionStatus;
   createdAt: Date;

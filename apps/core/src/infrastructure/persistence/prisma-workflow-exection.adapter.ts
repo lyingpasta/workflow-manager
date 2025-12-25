@@ -14,6 +14,7 @@ const fromPrismaToDomain = (
   prisma: PersistedWorkflowExecution,
 ): Omit<WorkflowExecution, 'workflowSchema'> => ({
   id: prisma.id,
+  workflowSchemaId: prisma.workflowSchemaId,
   status: match(prisma)
     .with(
       {
@@ -37,6 +38,12 @@ const fromPrismaToDomain = (
 @Injectable()
 export class PrismaWorkflowExecutionAdapter implements WorkflowExecutionRepository {
   constructor(private prismaService: PrismaService) { }
+
+  async getWorkflowExecutionsBySchemaId(schemaId: string): Promise<Omit<WorkflowExecution, 'workflowSchema'> | undefined> {
+    const prisma = await this.prismaService.workflowExecution.findFirst({ where: { workflowSchemaId: schemaId } })
+
+    return prisma ? fromPrismaToDomain(prisma) : undefined
+  }
 
   async getWorkflowExecutionsByWorkflowId(workflowId: string): Promise<Omit<WorkflowExecution, 'workflowSchema'>[]> {
     const prisma = await this.prismaService.workflowExecution.findMany({

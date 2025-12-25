@@ -23,6 +23,11 @@ export class PrismaWorkflowSchemaAdapter implements WorkflowSchemaRepository {
     private readonly prismaService: PrismaService,
   ) { }
 
+  async get(id: string): Promise<WorkflowSchema> {
+    const prisma = await this.prismaService.workflowSchema.findUniqueOrThrow({ where: { id } })
+    return fromPrismaToDomain(prisma)
+  }
+
   async update(id: string, data: Partial<Omit<WorkflowSchema, 'id' | 'createdAt' | 'updatedAt'>>): Promise<WorkflowSchema> {
     const prisma = await this.prismaService.workflowSchema.update({ where: { id }, data })
     return fromPrismaToDomain(prisma)
