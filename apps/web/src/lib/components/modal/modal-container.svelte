@@ -2,7 +2,7 @@
 	import type { CanvasNode } from '$lib/types/canvas';
 	import { scale } from 'svelte/transition';
 	import InputText from '../input-text.svelte';
-	import { bounceIn, bounceOut, expoIn } from 'svelte/easing';
+	import { bounceOut, expoIn } from 'svelte/easing';
 
 	let { node, onCancelButtonPressed, onCommitButtonPressed } = $props();
 
