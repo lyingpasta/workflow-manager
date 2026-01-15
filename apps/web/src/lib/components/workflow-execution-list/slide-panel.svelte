@@ -33,6 +33,9 @@
 		<div class="flex h-full items-center">
 			<Banner></Banner>
 		</div>
+		<button onclick={onClose} title="close" class="cursor-pointer"
+			><span class="pixelarticons--arrow-left-box text-gray-400"></span></button
+		>
 	{/if}
 </div>
 

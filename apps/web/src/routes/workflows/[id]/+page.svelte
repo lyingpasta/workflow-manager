@@ -11,6 +11,7 @@
 	import type { PageData } from './$types';
 	import { buildNodeTree, buildSchemaFromTree } from '$lib/utils/nodes';
 	import { submitWorkflowSchema } from './save-workflow-schema.remote';
+	import { goto } from '$app/navigation';
 
 	let { data }: { data: PageData } = $props();
 
@@ -104,7 +105,7 @@
 <svelte:window bind:innerWidth={width} bind:innerHeight={height} />
 
 <div id="workflow-container" class="relative h-full w-full">
-	<div class={` absolute w-full flex  top-4 left-4 z-50`}>
+	<div class="absolute w-full flex top-4 left-4 z-50 gap-3">
 		<Button
 			onClick={saveWorkflowSchema}
 			position="standalone"
@@ -113,6 +114,13 @@
 			><span class={`pixelarticons--save  ${shouldSave ? 'text-green-600' : 'text-gray-600'}`}
 			></span></Button
 		>
+		<Button
+			onClick={() => goto(`/workflows/${data.workflowId}/executions`)}
+			position="standalone"
+			type="normal"
+		>
+			<span class="pixelarticons--power text-gray-600"></span>
+		</Button>
 	</div>
 
 	<Canvas
@@ -144,6 +152,20 @@
 		width: 24px;
 		height: 24px;
 		--svg: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23000' d='M4 2h14v2H4v16h2v-6h12v6h2V6h2v16H2V2zm4 18h8v-4H8zM20 6h-2V4h2zM6 6h9v4H6z'/%3E%3C/svg%3E");
+		background-color: currentColor;
+		-webkit-mask-image: var(--svg);
+		mask-image: var(--svg);
+		-webkit-mask-repeat: no-repeat;
+		mask-repeat: no-repeat;
+		-webkit-mask-size: 100% 100%;
+		mask-size: 100% 100%;
+	}
+
+	.pixelarticons--power {
+		display: inline-block;
+		width: 24px;
+		height: 24px;
+		--svg: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23000' d='M20 2h-2v4H6v2H4v8h2v2h2v4h8v-2h4v-2h-4v-2h4v-2h-4v-2H8v4H6V8h12V6h2zm-6 18h-4v-6h4z'/%3E%3C/svg%3E");
 		background-color: currentColor;
 		-webkit-mask-image: var(--svg);
 		mask-image: var(--svg);

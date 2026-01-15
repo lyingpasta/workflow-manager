@@ -6,6 +6,7 @@ export const load: PageServerLoad = async ({ params }) => {
   const schema = await getWorkflowSchema(params.id)
   if (schema) {
     return {
+      workflowId: params.id,
       schema
     }
   }
