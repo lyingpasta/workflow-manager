@@ -4,7 +4,7 @@
 	import InputText from '../input-text.svelte';
 	import { bounceOut, expoIn } from 'svelte/easing';
 
-	let { node, onCancelButtonPressed, onCommitButtonPressed } = $props();
+	let { node, onCancelButtonPressed, onCommitButtonPressed, mode = 'edit' } = $props();
 
 	const initialTitle = $derived(node?.title);
 
@@ -38,11 +38,13 @@
 		class="rounded-lg w-full h-full bg-white border border-solid border-gray-500 p-2 justify-evenly flex flex-col gap-2"
 	>
 		<div class="flex flex-row justify-evenly gap-2 grow">
-			<div class="w-full h-full border border-solid border-gray-300 bg-gray-50"></div>
+			<div class="w-full h-full border border-solid border-gray-300 bg-gray-50">
+				<p></p>
+			</div>
 			<div class="w-full h-full pt-6 pb-2 pl-4 pr-4">
 				<div>
 					<p class="mb-2">Node Title</p>
-					<InputText bind:value={nodeTitle} />
+					<InputText bind:value={nodeTitle} disabled={mode === 'readonly'} />
 				</div>
 			</div>
 			<div class="w-full h-full border border-solid border-gray-300 bg-gray-50"></div>
@@ -52,10 +54,12 @@
 				class="w-25 p-2 bg-gray-300 rounded-sm hover:bg-gray-500 hover:text-gray-100 cursor-pointer transition-colors"
 				onclick={cancel}>Cancel</button
 			>
-			<button
-				class="w-25 p-2 hover:bg-blue-700 hover:text-gray-50 rounded-sm bg-blue-500 text-gray-900 cursor-pointer transition-colors"
-				onclick={commit}>Commit</button
-			>
+			{#if mode === 'edit'}
+				<button
+					class="w-25 p-2 hover:bg-blue-700 hover:text-gray-50 rounded-sm bg-blue-500 text-gray-900 cursor-pointer transition-colors"
+					onclick={commit}>Commit</button
+				>
+			{/if}
 		</div>
 	</div>
 </div>

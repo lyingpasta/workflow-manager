@@ -1,8 +1,10 @@
 <script lang="ts">
 	import Canvas from '$lib/components/canvas/canvas.svelte';
+	import ModalContainer from '$lib/components/modal/modal-container.svelte';
 	import type { CanvasNode } from '$lib/types/canvas';
 	import type { NodeFlowArrow } from '$lib/types/nodes';
 	import { buildNodeTree } from '$lib/utils/nodes.js';
+	import { mount, unmount } from 'svelte';
 
 	let { data } = $props();
 
@@ -12,8 +14,30 @@
 	let nodeFlowArrows: NodeFlowArrow[] = $state([]);
 	let selectedNode: CanvasNode | undefined = $state(undefined);
 	let schema = $derived(data.workflowExecution.workflowSchema);
+	let viewNodeModal: any | undefined = $state.raw(undefined);
+
+	function selectNodeAndView(node: CanvasNode) {
+		selectedNode = node;
+		viewNodeExecution();
+	}
+
+	function viewNodeExecution() {
+		viewNodeModal = mount(ModalContainer, {
+			target: document.getElementById('execution-container')!,
+			props: {
+				node: selectedNode,
+				mode: 'readonly',
+				onCancelButtonPressed: () => {
+					unmount(viewNodeModal, { outro: true });
+					viewNodeModal = undefined;
+				},
+				onCommitButtonPressed: () => {}
+			}
+		});
+	}
 
 	$effect(() => {
+		console.log(data);
 		const { nodes, arrowFlows } = buildNodeTree(schema);
 		canvasNodes = nodes;
 		nodeFlowArrows = arrowFlows;
@@ -22,14 +46,23 @@
 
 <svelte:window bind:innerWidth={width} bind:innerHeight={height} />
 
-<div
-	class="absolute top-3 right-1/2 z-90 flex flex-row bg-gray-200 px-4 py-1 rounded-md gap-3 items-center justify-center"
->
-	<span class="pixelarticons--eye text-gray-700"></span>
-	<div class="text-gray-700">Readonly</div>
-</div>
+<div id="execution-container" class="relative h-full w-full">
+	<div
+		class="absolute top-3 right-1/2 z-90 flex flex-row bg-gray-200 px-4 py-1 rounded-md gap-3 items-center justify-center"
+	>
+		<span class="pixelarticons--eye text-gray-700"></span>
+		<div class="text-gray-700">Readonly</div>
+	</div>
 
-<Canvas {canvasNodes} {width} {height} {selectedNode} {nodeFlowArrows} />
+	<Canvas
+		{canvasNodes}
+		{width}
+		{height}
+		{selectedNode}
+		{nodeFlowArrows}
+		onNodeSelected={selectNodeAndView}
+	/>
+</div>
 
 <style>
 	.pixelarticons--eye {
