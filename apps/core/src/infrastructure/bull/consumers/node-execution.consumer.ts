@@ -30,12 +30,10 @@ export class NodeExecutionEventConsumer extends WorkerHost {
               workflowExecutionId: P.string,
               createdAt: P.string,
             },
-            input: P.nonNullable,
           },
         },
         (job) =>
           this.startNodeExecutionUseCase.execute({
-            input: job.data.input,
             nodeExecution: {
               ...job.data.nodeExecution,
               createdAt: new Date(job.data.nodeExecution.createdAt),

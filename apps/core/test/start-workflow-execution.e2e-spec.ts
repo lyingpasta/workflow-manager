@@ -98,6 +98,7 @@ describe('Create Workflow Execution', () => {
 
       workflowExecutionEventProducer.produceStartEvent({
         workflowExecutionId: workflowExecution.id,
+        input: { value: "test" }
       });
       await setTimeout(3000, true);
       const nodeExecutions = await prismaService.nodeExecution.findMany({
@@ -113,6 +114,7 @@ describe('Create Workflow Execution', () => {
             isStart: true,
             isEnd: false,
             workflowExecutionId: workflowExecution.id,
+            input: { value: "test" }
           }),
         }),
       );

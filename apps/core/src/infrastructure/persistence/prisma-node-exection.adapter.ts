@@ -42,7 +42,7 @@ const fromPrismaToDomain = (
 
 @Injectable()
 export class PrismaNodeExecutionAdapter implements NodeExecutionRepository {
-  constructor(private prismaService: PrismaService) {}
+  constructor(private prismaService: PrismaService) { }
 
   async create(
     data: Omit<WorkflowNodeExecution, 'id' | 'createdAt'>,
@@ -56,6 +56,7 @@ export class PrismaNodeExecutionAdapter implements NodeExecutionRepository {
         isStart: data.isStart,
         isEnd: data.isEnd,
         workflowExecutionId: data.workflowExecutionId,
+        input: data.input
       },
     });
     return fromPrismaToDomain(prisma);

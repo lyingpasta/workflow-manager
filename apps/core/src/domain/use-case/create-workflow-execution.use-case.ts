@@ -7,6 +7,7 @@ import { WorkflowExecutionEventProducer } from 'src/infrastructure/bull/producer
 
 type CreateWorkflowExecutionUseCasePort = {
   workflowId: string;
+  input: any
 };
 
 @Injectable()
@@ -34,6 +35,7 @@ export class CreateWorkflowExecutionUseCase {
     // add execution to queue
     await this.workflowExecutionEventProducer.produceStartEvent({
       workflowExecutionId: workflowExecution.id,
+      input: port.input
     });
   }
 }

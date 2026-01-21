@@ -32,13 +32,15 @@ export class NodeService {
       .run();
   }
 
-  private processTransformNode(input: any, node: WorkflowNode) {}
-
-  private processLoadNode(_input: any, _node: WorkflowNode) {
-    throw new Error('not yet implemented ');
+  private processTransformNode(input: any, node: WorkflowNode) {
+    return input
   }
 
-  private processControlNode(_input: any, _node: WorkflowNode) {
-    throw new Error('not yet implemented ');
+  private processLoadNode(input: any, _node: WorkflowNode) {
+    return input
+  }
+
+  private processControlNode(input: any, _node: WorkflowNode) {
+    return input
   }
 }

@@ -19,10 +19,10 @@ export class WorkflowExecutionEventConsumer extends WorkerHost {
       .with(
         {
           name: 'start',
-          data: { workflowExecutionId: P.string.select() },
+          data: P.select({ workflowExecutionId: P.string, input: P.any }),
         },
-        (workflowExecutionId) =>
-          this.startWorkflowExecutionUseCase.execute({ workflowExecutionId }),
+        (workflowExecution) =>
+          this.startWorkflowExecutionUseCase.execute(workflowExecution),
       )
       .otherwise(() => {
         console.warn(
