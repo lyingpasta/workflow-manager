@@ -11,7 +11,7 @@
 		"nuke": "turbo nuke && rm -rf node_modules"
 	},
 	"devDependencies": {
-		"turbo": "^2.6.3"
+		"turbo": "^2.7.5"
 	},
 	"packageManager": "pnpm@10.26.1"
 }
