@@ -37,21 +37,27 @@ const fromPrismaToDomain = (
 
 @Injectable()
 export class PrismaWorkflowExecutionAdapter implements WorkflowExecutionRepository {
-  constructor(private prismaService: PrismaService) { }
+  constructor(private prismaService: PrismaService) {}
 
-  async getWorkflowExecutionsBySchemaId(schemaId: string): Promise<Omit<WorkflowExecution, 'workflowSchema'> | undefined> {
-    const prisma = await this.prismaService.workflowExecution.findFirst({ where: { workflowSchemaId: schemaId } })
+  async getWorkflowExecutionsBySchemaId(
+    schemaId: string,
+  ): Promise<Omit<WorkflowExecution, 'workflowSchema'> | undefined> {
+    const prisma = await this.prismaService.workflowExecution.findFirst({
+      where: { workflowSchemaId: schemaId },
+    });
 
-    return prisma ? fromPrismaToDomain(prisma) : undefined
+    return prisma ? fromPrismaToDomain(prisma) : undefined;
   }
 
-  async getWorkflowExecutionsByWorkflowId(workflowId: string): Promise<Omit<WorkflowExecution, 'workflowSchema'>[]> {
+  async getWorkflowExecutionsByWorkflowId(
+    workflowId: string,
+  ): Promise<Omit<WorkflowExecution, 'workflowSchema'>[]> {
     const prisma = await this.prismaService.workflowExecution.findMany({
       where: {
-        workflowId
-      }
-    })
-    return prisma.map(fromPrismaToDomain)
+        workflowId,
+      },
+    });
+    return prisma.map(fromPrismaToDomain);
   }
 
   async update(

@@ -8,9 +8,12 @@ export class WorkflowExecutionEventProducer {
   constructor(
     @InjectQueue(WORKFLOW_EXECUTION_QUEUE)
     private workflowExecutionQueue: Queue,
-  ) { }
+  ) {}
 
-  produceStartEvent(input: { workflowExecutionId: string, input: any }): Promise<Job> {
+  produceStartEvent(input: {
+    workflowExecutionId: string;
+    input: any;
+  }): Promise<Job> {
     return this.workflowExecutionQueue.add('start', input);
   }
 }

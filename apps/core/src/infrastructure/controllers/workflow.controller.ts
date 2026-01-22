@@ -10,7 +10,7 @@ export class WorkflowController {
     private readonly createWorkflowUseCase: CreateWorkflowUseCase,
     @Inject()
     private readonly getWorkflowListUseCase: GetWorkflowListUseCase,
-  ) { }
+  ) {}
 
   @Post()
   createWorkflow(@Body() input: CreateWorkflowDTO) {

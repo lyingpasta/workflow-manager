@@ -11,6 +11,10 @@ export interface WorkflowExecutionRepository {
       Omit<WorkflowExecution, 'id' | 'createdAt' | 'workflowSchema'>
     >,
   ): Promise<Omit<WorkflowExecution, 'workflowSchema'>>;
-  getWorkflowExecutionsByWorkflowId(workflowId: string): Promise<Omit<WorkflowExecution, 'workflowSchema'>[]>
-  getWorkflowExecutionsBySchemaId(schemaId: string): Promise<Omit<WorkflowExecution, 'workflowSchema'> | undefined>
+  getWorkflowExecutionsByWorkflowId(
+    workflowId: string,
+  ): Promise<Omit<WorkflowExecution, 'workflowSchema'>[]>;
+  getWorkflowExecutionsBySchemaId(
+    schemaId: string,
+  ): Promise<Omit<WorkflowExecution, 'workflowSchema'> | undefined>;
 }

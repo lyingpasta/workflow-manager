@@ -1,4 +1,4 @@
 export class SaveWorkflowSchemaDTO {
-  id: string
-  schema: any
+  id: string;
+  schema: any;
 }

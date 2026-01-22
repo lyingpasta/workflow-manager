@@ -29,7 +29,7 @@ export class StartNodeExecutionUseCase {
     private workflowService: WorkflowService,
     @Inject(forwardRef(() => NodeExecutionEventProducer))
     private readonly nodeExecutionEventProducer: NodeExecutionEventProducer,
-  ) { }
+  ) {}
 
   async execute(port: StartNodeExecutionUseCasePort): Promise<void> {
     //gather and prepare
@@ -46,7 +46,10 @@ export class StartNodeExecutionUseCase {
     const workflowNode = convertToWorkflowNode(node);
 
     //execute workflow
-    const output = this.nodeService.process(port.nodeExecution.input, workflowNode);
+    const output = this.nodeService.process(
+      port.nodeExecution.input,
+      workflowNode,
+    );
     await this.nodeExecutionRepository.update(port.nodeExecution.id, {
       status: 'succeeded',
       output,

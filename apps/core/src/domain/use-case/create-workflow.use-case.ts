@@ -22,7 +22,7 @@ export class CreateWorkflowUseCase {
     private readonly workflowRepository: WorkflowRepository,
     @Inject(WorkflowSchemaRepositoryToken)
     private readonly workflowSchemaRepository: WorkflowSchemaRepository,
-  ) { }
+  ) {}
 
   async execute(
     port: CreateWorkflowUseCasePort,

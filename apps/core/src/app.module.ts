@@ -19,7 +19,11 @@ import { WorkflowController } from './infrastructure/controllers/workflow.contro
     DomainModule,
     ConfigModule.forRoot({ isGlobal: true }),
   ],
-  controllers: [WorkflowController, WorkflowExecutionController, WorkflowSchemaController],
+  controllers: [
+    WorkflowController,
+    WorkflowExecutionController,
+    WorkflowSchemaController,
+  ],
   providers: [],
 })
-export class AppModule { }
+export class AppModule {}

@@ -14,7 +14,7 @@ import { WorkflowService } from '../services/workflow.service';
 
 type StartWorkflowExecutionUseCasePort = {
   workflowExecutionId: string;
-  input: any
+  input: any;
 };
 
 @Injectable()
@@ -28,7 +28,7 @@ export class StartWorkflowExecutionUseCase {
     private readonly nodeExecutionEventProducer: NodeExecutionEventProducer,
     @Inject()
     private workflowService: WorkflowService,
-  ) { }
+  ) {}
 
   async execute(port: StartWorkflowExecutionUseCasePort): Promise<void> {
     const workflowExecution =
@@ -37,7 +37,9 @@ export class StartWorkflowExecutionUseCase {
       );
 
     await match(workflowExecution)
-      .with({ status: 'created' }, () => this.startExecution(workflowExecution, port.input))
+      .with({ status: 'created' }, () =>
+        this.startExecution(workflowExecution, port.input),
+      )
       .otherwise(() => {
         throw new Error(
           `Forbidden operation: wrong workflow status ${workflowExecution.status}`,
@@ -45,7 +47,10 @@ export class StartWorkflowExecutionUseCase {
       });
   }
 
-  private async startExecution(workflowExecution: WorkflowExecution, input: any) {
+  private async startExecution(
+    workflowExecution: WorkflowExecution,
+    input: any,
+  ) {
     const nodes =
       this.workflowService.getWorkflowExecutionBlueprint(workflowExecution);
 
@@ -63,7 +68,7 @@ export class StartWorkflowExecutionUseCase {
           workflowExecutionId: workflowExecution.id,
           isStart: starterNode.isStart,
           isEnd: starterNode.isEnd,
-          input
+          input,
         });
 
         return this.nodeExecutionEventProducer.produceStartEvent({

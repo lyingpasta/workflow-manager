@@ -29,4 +29,4 @@ const useCases = [
   imports: [forwardRef(() => InfrastructureModule)],
   exports: [...useCases],
 })
-export class DomainModule { }
+export class DomainModule {}

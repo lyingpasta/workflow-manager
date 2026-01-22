@@ -7,7 +7,7 @@ import { WorkflowExecutionEventProducer } from 'src/infrastructure/bull/producer
 
 type CreateWorkflowExecutionUseCasePort = {
   workflowId: string;
-  input: any
+  input: any;
 };
 
 @Injectable()
@@ -19,7 +19,7 @@ export class CreateWorkflowExecutionUseCase {
     private readonly workflowExecutionRepository: WorkflowExecutionRepository,
     @Inject(forwardRef(() => WorkflowExecutionEventProducer))
     private readonly workflowExecutionEventProducer: WorkflowExecutionEventProducer,
-  ) { }
+  ) {}
 
   async execute(port: CreateWorkflowExecutionUseCasePort): Promise<void> {
     const workflowSchema =
@@ -35,7 +35,7 @@ export class CreateWorkflowExecutionUseCase {
     // add execution to queue
     await this.workflowExecutionEventProducer.produceStartEvent({
       workflowExecutionId: workflowExecution.id,
-      input: port.input
+      input: port.input,
     });
   }
 }

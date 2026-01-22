@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Inject, Param, Post, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Inject,
+  Param,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { CreateWorkflowExecutionUseCase } from 'src/domain/use-case/create-workflow-execution.use-case';
 import { GetWorkflowExecutionsOfWorkflowUseCase } from 'src/domain/use-case/get-workflow-executions-of-workflow.use-case';
 import { GetWorkflowExecutionWithSchemaUseCase } from 'src/domain/use-case/get-workflow-executions-with-schema.use-case';
@@ -11,21 +19,24 @@ export class WorkflowExecutionController {
     @Inject()
     private readonly getWorkflowExecutionsOfWorkflowUseCase: GetWorkflowExecutionsOfWorkflowUseCase,
     @Inject()
-    private readonly getWorkflowExecutionWithSchemaUseCase: GetWorkflowExecutionWithSchemaUseCase
-  ) { }
+    private readonly getWorkflowExecutionWithSchemaUseCase: GetWorkflowExecutionWithSchemaUseCase,
+  ) {}
 
   @Post(':id/start')
   startWorkflow(@Param('id') id: string, @Body() input: any) {
-    return this.createWorkflowExecutionUseCase.execute({ workflowId: id, input });
+    return this.createWorkflowExecutionUseCase.execute({
+      workflowId: id,
+      input,
+    });
   }
 
   @Get()
   getListByWorkflow(@Query('worflowId') workflowId: string) {
-    return this.getWorkflowExecutionsOfWorkflowUseCase.execute({ workflowId })
+    return this.getWorkflowExecutionsOfWorkflowUseCase.execute({ workflowId });
   }
 
   @Get(':id')
   getWorkflowExecutionWithSchema(@Param('id') id: string) {
-    return this.getWorkflowExecutionWithSchemaUseCase.execute(id)
+    return this.getWorkflowExecutionWithSchemaUseCase.execute(id);
   }
 }

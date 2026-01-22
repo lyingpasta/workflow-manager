@@ -33,14 +33,14 @@ export class NodeService {
   }
 
   private processTransformNode(input: any, node: WorkflowNode) {
-    return input
+    return input;
   }
 
   private processLoadNode(input: any, _node: WorkflowNode) {
-    return input
+    return input;
   }
 
   private processControlNode(input: any, _node: WorkflowNode) {
-    return input
+    return input;
   }
 }
