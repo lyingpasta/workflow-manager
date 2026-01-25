@@ -13,7 +13,7 @@ export class WorkflowService {
   constructor(
     @Inject(NodeExecutionRepositoryToken)
     private readonly nodeExecutionRepository: NodeExecutionRepository,
-  ) {}
+  ) { }
 
   async buildNextNodeExecution(
     workflowExecution: WorkflowExecution,
@@ -58,9 +58,19 @@ export class WorkflowService {
 
     for (let maybeFlowArrow of schema.flows as any[]) {
       match(maybeFlowArrow)
-        .with({ from: P.string, to: P.string }, (arrowFlow) => {
-          const node = nodesMap.get(arrowFlow.from);
-          const nextNode = nodesMap.get(arrowFlow.to);
+        .with({ fromNodeId: P.string, toNodeId: P.string }, (arrowFlow) => {
+          const node = nodesMap.get(arrowFlow.fromNodeId);
+          if (node) {
+            node.isEnd = false
+            nodesMap.set(node.id, node);
+          }
+
+          const nextNode = nodesMap.get(arrowFlow.toNodeId);
+          if (nextNode) {
+            nextNode.isStart = false
+            nodesMap.set(nextNode.id, nextNode);
+          }
+
           if (node && nextNode && !node.nextNodeId) {
             node.nextNodeId = nextNode.id;
             nodesMap.set(node.id, node);

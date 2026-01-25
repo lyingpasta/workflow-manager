@@ -21,7 +21,7 @@ export class PrismaWorkflowSchemaAdapter implements WorkflowSchemaRepository {
   constructor(
     @Inject()
     private readonly prismaService: PrismaService,
-  ) {}
+  ) { }
 
   async get(id: string): Promise<WorkflowSchema> {
     const prisma = await this.prismaService.workflowSchema.findUniqueOrThrow({
@@ -60,6 +60,7 @@ export class PrismaWorkflowSchemaAdapter implements WorkflowSchemaRepository {
         workflow: {
           id: workflowId,
         },
+        isActive: true
       },
     });
     return fromPrismaToDomain(prisma);

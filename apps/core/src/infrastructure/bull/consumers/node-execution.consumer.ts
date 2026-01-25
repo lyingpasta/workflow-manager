@@ -15,35 +15,39 @@ export class NodeExecutionEventConsumer extends WorkerHost {
   }
 
   async process(job: Job): Promise<void> {
-    return match(job)
-      .with(
-        {
-          name: 'start',
-          data: {
-            nodeExecution: {
-              id: P.string,
-              nodeId: P.string,
-              nextNodeId: P.string.optional(),
-              isStart: P.boolean,
-              isEnd: P.boolean,
-              status: 'pending',
-              workflowExecutionId: P.string,
-              createdAt: P.string,
+    try {
+      return match(job)
+        .with(
+          {
+            name: 'start',
+            data: {
+              nodeExecution: {
+                id: P.string,
+                nodeId: P.string,
+                nextNodeId: P.string.optional(),
+                isStart: P.boolean,
+                isEnd: P.boolean,
+                status: 'pending',
+                workflowExecutionId: P.string,
+                createdAt: P.string,
+              },
             },
           },
-        },
-        (job) =>
-          this.startNodeExecutionUseCase.execute({
-            nodeExecution: {
-              ...job.data.nodeExecution,
-              createdAt: new Date(job.data.nodeExecution.createdAt),
-            },
-          }),
-      )
-      .otherwise(() => {
-        console.warn(
-          `Corrupted event received ${JSON.stringify({ name: job.name, data: job.data })}`,
-        );
-      });
+          (job) =>
+            this.startNodeExecutionUseCase.execute({
+              nodeExecution: {
+                ...job.data.nodeExecution,
+                createdAt: new Date(job.data.nodeExecution.createdAt),
+              },
+            }),
+        )
+        .otherwise(() => {
+          console.warn(
+            `Corrupted event received ${JSON.stringify({ name: job.name, data: job.data })}`,
+          );
+        });
+    } catch (e) {
+      console.error(e)
+    }
   }
 }

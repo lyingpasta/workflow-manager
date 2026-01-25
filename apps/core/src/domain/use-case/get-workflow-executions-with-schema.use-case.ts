@@ -13,19 +13,14 @@ export class GetWorkflowExecutionWithSchemaUseCase {
     private readonly workflowExecutionRepository: WorkflowExecutionRepository,
     @Inject(NodeExecutionRepositoryToken)
     private readonly nodeExecutionRepository: NodeExecutionRepository,
-  ) {}
+  ) { }
 
   async execute(port: GetWorkflowExecutionWithSchemaUseCasePort) {
     const workflowExecution =
       await this.workflowExecutionRepository.getWithWorkflowSchema(port);
 
-    const nodeExecutions = (
-      workflowExecution.workflowSchema.schema?.nodes as { id: string }[]
-    ).map((node) =>
-      this.nodeExecutionRepository.getByNodeIdAndExecutionId(
-        node.id,
-        workflowExecution.id,
-      ),
+    const nodeExecutions = await this.nodeExecutionRepository.getByExecutionId(
+      workflowExecution.id,
     );
 
     return {

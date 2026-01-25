@@ -15,19 +15,23 @@ export class WorkflowExecutionEventConsumer extends WorkerHost {
   }
 
   async process(job: Job): Promise<void> {
-    return match(job)
-      .with(
-        {
-          name: 'start',
-          data: P.select({ workflowExecutionId: P.string, input: P.any }),
-        },
-        (workflowExecution) =>
-          this.startWorkflowExecutionUseCase.execute(workflowExecution),
-      )
-      .otherwise(() => {
-        console.warn(
-          `Corrupted event received ${JSON.stringify({ name: job.name, data: job.data })}`,
-        );
-      });
+    try {
+      return match(job)
+        .with(
+          {
+            name: 'start',
+            data: P.select({ workflowExecutionId: P.string, input: P.any }),
+          },
+          (workflowExecution) =>
+            this.startWorkflowExecutionUseCase.execute(workflowExecution),
+        )
+        .otherwise(() => {
+          console.warn(
+            `Corrupted event received ${JSON.stringify({ name: job.name, data: job.data })}`,
+          );
+        });
+    } catch (e) {
+      console.error(e)
+    }
   }
 }

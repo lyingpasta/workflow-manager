@@ -44,6 +44,30 @@ const fromPrismaToDomain = (
 export class PrismaNodeExecutionAdapter implements NodeExecutionRepository {
   constructor(private prismaService: PrismaService) { }
 
+  async getByExecutionId(
+    executionId: string,
+  ): Promise<WorkflowNodeExecution[]> {
+    const prisma = await this.prismaService.nodeExecution.findMany({
+      where: {
+        workflowExecutionId: executionId,
+      },
+    });
+    return prisma.map(fromPrismaToDomain)
+  }
+
+  async getByNodeIdAndExecutionId(
+    nodeId: string,
+    executionId: string,
+  ): Promise<WorkflowNodeExecution | undefined> {
+    const prisma = await this.prismaService.nodeExecution.findFirst({
+      where: {
+        nodeId,
+        workflowExecutionId: executionId,
+      },
+    });
+    return prisma ? fromPrismaToDomain(prisma) : undefined;
+  }
+
   async create(
     data: Omit<WorkflowNodeExecution, 'id' | 'createdAt'>,
   ): Promise<WorkflowNodeExecution> {
@@ -56,7 +80,7 @@ export class PrismaNodeExecutionAdapter implements NodeExecutionRepository {
         isStart: data.isStart,
         isEnd: data.isEnd,
         workflowExecutionId: data.workflowExecutionId,
-        input: data.input
+        input: data.input,
       },
     });
     return fromPrismaToDomain(prisma);

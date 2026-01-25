@@ -78,17 +78,13 @@ export const convertToWorkflowNode = (node: any): WorkflowNode =>
     .with(
       {
         id: P.string,
-        nextNodeId: P.string.optional(),
-        isStart: P.boolean,
-        isEnd: P.boolean,
       },
       (node) =>
         ({
           ...convertToOperationNode(node),
           id: node.id,
-          nextNodeId: node.nextNodeId,
-          isStart: node.isStart,
-          isEnd: node.isEnd,
+          isStart: true,
+          isEnd: true,
         }) satisfies WorkflowNode,
     )
     .otherwise(() => {

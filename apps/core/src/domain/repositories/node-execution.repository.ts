@@ -11,4 +11,9 @@ export interface NodeExecutionRepository {
       Omit<WorkflowNodeExecution, 'id' | 'createdAt' | 'updatedAt'>
     >,
   ): Promise<WorkflowNodeExecution>;
+  getByNodeIdAndExecutionId(
+    nodeId: string,
+    executionId: string,
+  ): Promise<WorkflowNodeExecution | undefined>;
+  getByExecutionId(executionId: string): Promise<WorkflowNodeExecution[]>
 }
