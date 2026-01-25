@@ -17,19 +17,20 @@
 	let viewNodeModal: any | undefined = $state.raw(undefined);
 
 	function selectNodeAndView(node: CanvasNode) {
-		selectedNode = node;
-		viewNodeExecution();
+		const nodeExecution = data.nodeExecutions.find((n: any) => n.nodeId === node.id);
+		viewNodeExecution({ ...node, ...nodeExecution });
 	}
 
-	function viewNodeExecution() {
+	function viewNodeExecution(node: any) {
 		viewNodeModal = mount(ModalContainer, {
 			target: document.getElementById('execution-container')!,
 			props: {
-				node: selectedNode,
+				node,
 				mode: 'readonly',
 				onCancelButtonPressed: () => {
 					unmount(viewNodeModal, { outro: true });
 					viewNodeModal = undefined;
+					selectedNode = undefined;
 				},
 				onCommitButtonPressed: () => {}
 			}
@@ -37,7 +38,6 @@
 	}
 
 	$effect(() => {
-		console.log(data);
 		const { nodes, arrowFlows } = buildNodeTree(schema);
 		canvasNodes = nodes;
 		nodeFlowArrows = arrowFlows;

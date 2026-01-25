@@ -435,7 +435,8 @@
 				x: fromGlobalCoordinates(menuCoordinates).x - NODE_DIMENSION / 2,
 				y: fromGlobalCoordinates(menuCoordinates).y - NODE_DIMENSION / 2
 			},
-			title: type
+			title: type,
+			type
 		};
 		onNodeDraw(node, type);
 		destroyActionMenuIfPossible();
